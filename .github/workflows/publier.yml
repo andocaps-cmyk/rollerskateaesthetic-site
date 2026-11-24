@@ -93,24 +93,24 @@ jobs:
       # un echec rend la chaine rouge.
       - name: Miroir de prod vers l'hebergement
         env:
-          MIROIR_PAT: ${{ secrets.ROLLER_PROD_MIROIR_PAT }}
+          MIROIR_KEY: ${{ secrets.ROLLER_PROD_MIROIR_KEY }}
         run: |
           set -eu
-          if [ -z "$MIROIR_PAT" ]; then
-            echo "::error::Secret ROLLER_PROD_MIROIR_PAT absent : prod n'est pas recopie vers l'hebergement."; exit 1
+          if [ -z "$MIROIR_KEY" ]; then
+            echo "::error::Secret ROLLER_PROD_MIROIR_KEY absent : prod n'est pas recopie vers l'hebergement."; exit 1
           fi
-          # retire l'en-tete d'authentification pose par actions/checkout (jeton du depot neuf, sans droit sur l'hebergement)
-          git config --local --unset-all http.https://github.com/.extraheader || true
-          AUTH=$(printf 'x-access-token:%s' "$MIROIR_PAT" | base64 -w0)
-          echo "::add-mask::$AUTH"
-          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=http.extraheader GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $AUTH"
-          CIBLE=https://github.com/andocaps-cmyk/rollerskateaesthetic.git
+          CLE=$(mktemp)
+          trap 'rm -f "$CLE"' EXIT
+          chmod 600 "$CLE"
+          printf '%s\n' "$MIROIR_KEY" > "$CLE"
+          export GIT_SSH_COMMAND="ssh -i $CLE -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+          CIBLE=git@github.com:andocaps-cmyk/rollerskateaesthetic.git
           APRES=$(git rev-parse HEAD)
           DEJA=$(git ls-remote "$CIBLE" refs/heads/prod | cut -f1)
           if [ "$DEJA" = "$APRES" ]; then
             echo "L'hebergement est deja a $APRES : rien a recopier."; exit 0
           fi
-          git push --force "$CIBLE" "+HEAD:refs/heads/prod"
+          git push "$CIBLE" +HEAD:refs/heads/prod
           echo "Miroir : prod de l'hebergement $DEJA -> $APRES"
 
       - name: Controle apres deploiement (ne bloque pas)
