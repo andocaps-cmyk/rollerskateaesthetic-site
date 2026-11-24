@@ -1,0 +1,22 @@
+name: diag miroir
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: diag
+        env:
+          MIROIR_PAT: ${{ secrets.ROLLER_PROD_MIROIR_PAT }}
+        run: |
+          git --version
+          git config --local --get-regexp 'extraheader|includeif' | sed -E 's/(basic ).*/\1***/' || true
+          AUTH=$(printf 'x-access-token:%s' "$MIROIR_PAT" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          echo "longueur secret: ${#MIROIR_PAT}"
+          curl -s -o /dev/null -w "api ancien depot, Bearer: %{http_code}\n" -H "Authorization: Bearer $MIROIR_PAT" https://api.github.com/repos/andocaps-cmyk/rollerskateaesthetic
+          curl -s -o /dev/null -w "git info/refs basic: %{http_code}\n" -H "Authorization: basic $AUTH" "https://github.com/andocaps-cmyk/rollerskateaesthetic.git/info/refs?service=git-upload-pack"
