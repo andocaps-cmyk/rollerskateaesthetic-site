@@ -1,0 +1,79 @@
+# niveau : script — publication sans modèle, zéro jeton ; pas de niveau au-dessus nécessaire.
+name: Publication Bluesky
+
+# Publie sur Bluesky les epingles du flux feed.xml (publier_reseaux.py).
+on:
+  schedule:
+    - cron: "40 16 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true = affiche sans publier"
+        default: "true"
+      max_posts:
+        description: "Plafond de publications"
+        default: "9"
+  # Declencheur de secours : le jeton d'API du projet ne peut pas lancer workflow_dispatch (403).
+  # Modifier _releves/declencheur_bluesky.txt (lignes dry_run=true|false, max_posts=N) lance ce workflow.
+  # Sans ce fichier lisible, le defaut est dry_run=true : un push ne publie jamais par accident.
+  push:
+    branches: [main]
+    paths: ["_releves/declencheur_bluesky.txt"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bluesky
+  cancel-in-progress: false
+
+jobs:
+  bluesky:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # feed_archive.xml du depot n'est regenere qu'a la main (dernier : 21/09) ; on le reconstruit ici,
+      # dans le runner seulement, pour que les epingles sorties depuis entrent dans l'arriere Bluesky.
+      # Il n'est jamais commite par cette chaine (le flux Flipboard n'en est pas touche).
+      - name: Regenerer le catalogue dans le runner (non commite)
+        run: python3 build_feed_archive.py
+
+      - name: Publier
+        env:
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          EVENT: ${{ github.event_name }}
+          IN_DRY: ${{ github.event.inputs.dry_run }}
+          IN_MAX: ${{ github.event.inputs.max_posts }}
+        run: |
+          DRY_RUN=true; MAX_POSTS=9
+          if [ "$EVENT" = "schedule" ]; then DRY_RUN=false; fi
+          if [ "$EVENT" = "workflow_dispatch" ]; then DRY_RUN="${IN_DRY:-true}"; MAX_POSTS="${IN_MAX:-9}"; fi
+          if [ "$EVENT" = "push" ]; then
+            v=$(sed -n 's/^dry_run=//p' _releves/declencheur_bluesky.txt | head -1 | tr -d '\r '); [ -n "$v" ] && DRY_RUN="$v"
+            m=$(sed -n 's/^max_posts=//p' _releves/declencheur_bluesky.txt | head -1 | tr -d '\r '); [ -n "$m" ] && MAX_POSTS="$m"
+          fi
+          echo "Mode: dry_run=$DRY_RUN max_posts=$MAX_POSTS (evenement $EVENT)"
+          echo "DRY_RUN=$DRY_RUN" >> "$GITHUB_ENV"
+          if [ "$DRY_RUN" = "true" ]; then
+            python3 publier_reseaux.py --dry-run --max-posts "$MAX_POSTS"
+          else
+            python3 publier_reseaux.py --max-posts "$MAX_POSTS"
+          fi
+
+      - name: Pousser le registre
+        if: always() && env.DRY_RUN == 'false'
+        run: |
+          git config user.name "bluesky-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -- feed_archive.xml
+          # echecs_bluesky.tsv : motif de chaque refus, ecrit par publier_reseaux.py (n'existe qu'apres un premier echec)
+          git add _releves/publies_bluesky.tsv _releves/arriere_bluesky.txt _releves/derniere_publication_bluesky.txt $(ls _releves/echecs_bluesky.tsv _releves/suspension_bluesky.json 2>/dev/null)
+          if git diff --cached --quiet; then echo "Registre inchange."; exit 0; fi
+          echo "URI publiees :"; git diff --cached _releves/publies_bluesky.tsv | grep '^+[^+]' | cut -f3 || true
+          git commit -m "Registre Bluesky du $(date -u +%F)"
+          git pull --rebase origin main && git push || { git pull --rebase origin main && git push; }

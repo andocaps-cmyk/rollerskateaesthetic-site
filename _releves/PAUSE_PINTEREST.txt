@@ -1,0 +1,6 @@
+PAUSE PINTEREST — posee le 26/10/2026 vers 15 h Paris par l'agent de remise en route du chef.
+Motif : rollerskateaesthetic.com bloque par Pinterest le 25/10/2026 (anti-spam). Toute epingle neuve
+vers ce domaine risque d'aggraver la sanction du compte rollerskateaesthetic.
+Effet : build_feed.py --fenetre ecrit feed.xml vide (0 item) ; surveillance.py le compte vert.
+Rallumer : supprimer ce fichier et pousser, seulement apres levee ecrite du blocage par Pinterest.
+feed_archive.xml (Flipboard) n'est pas touche.

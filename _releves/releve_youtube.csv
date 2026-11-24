@@ -1,0 +1,27 @@
+date;heure_paris;reseau;billets_ou_articles;abonnes;notes_totales;viewers;page_flips;vues_mensuelles;source;erreur
+2026-10-29;13:32;youtube;0;0;0;0;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-10-30;17:32;youtube;1;0;0;0;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-10-31;16:47;youtube;2;0;0;0;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-01;17:37;youtube;3;0;0;0;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-02;20:57;youtube;4;0;0;1;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-03;01:26;youtube;5;0;0;28;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-04;18:46;youtube;6;0;0;78;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-05;18:45;youtube;7;0;0;85;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-06;18:04;youtube;8;0;0;96;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-07;17:04;youtube;9;0;0;136;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-08;17:22;youtube;10;0;0;173;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-09;21:19;youtube;11;0;0;179;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-10;02:15;youtube;12;0;0;191;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-11;18:31;youtube;13;0;0;212;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-12;00:39;youtube;14;0;0;216;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-13;18:28;youtube;16;0;0;287;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-14;17:18;youtube;18;0;0;325;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-15;17:52;youtube;20;0;0;393;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-16;20:53;youtube;22;0;0;453;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-17;02:21;youtube;23;0;0;453;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-18;00:55;youtube;25;0;1;506;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-19;00:51;youtube;26;0;1;534;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-20;00:50;youtube;28;0;1;552;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-21;00:27;youtube;30;0;1;608;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-22;18:28;youtube;33;0;2;696;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);
+2026-11-23;22:40;youtube;35;0;3;723;;;YouTube Data API v3 channels.statistics (videoCount, subscriberCount, viewCount) + videos.statistics (j'aime+commentaires);

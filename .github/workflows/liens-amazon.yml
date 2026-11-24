@@ -1,0 +1,452 @@
+name: Liens Amazon sur les pages de materiel
+
+# Il pose le premier bloc de liens d'affiliation Amazon du projet sur cinq pages de materiel,
+# sur les serveurs de GitHub, et renvoie le resultat dans ce depot. Cloudflare publie derriere.
+#
+# Le bloc pousse a METTRE AU PANIER et pas a acheter tout de suite : le cookie Amazon dure
+# 24 heures, mais un article mis au panier pendant ces 24 heures reste attribue 90 jours.
+#
+# Aucun prix et aucune disponibilite ne sont ecrits en dur : le contrat l'interdit.
+# Chaque article est lie individuellement, parce que la vente par ricochet est morte depuis
+# le 14 avril 2026 et que la commission ne porte plus que sur l'article promu et ses variantes.
+#
+# Il est idempotent : une page qui porte deja un lien de panier n'est pas retouchee.
+
+# ⛔⛔ PIEGE MESURE LE 22/08/2026, SESSION 100, ET IL A COUTE UNE EXECUTION PERDUE :
+# NE JAMAIS POUSSER UN SECOND COMMIT PENDANT QU UNE EXECUTION DE CE WORKFLOW TOURNE.
+# Ce jour-la, le lot 8 a ete pousse en deux commits a une minute d intervalle. La premiere
+# execution a POSE le bloc du moonwalk et PASSE tous ses controles — 33 pages equipees,
+# mention Amazon partout, aucun lien Sovrn — puis son `git push` a ete REJETE : le second
+# commit etait arrive entre-temps et la branche avait avance sous elle.
+# ⚠ ET LA TRACE EST TROMPEUSE : l execution est rouge, mais rien de ce qu elle a calcule
+# n etait faux. Lire le journal jusqu au bout avant de chercher une erreur dans le
+# dictionnaire des articles — le message a chercher est « fetch first ».
+# ➡️ LA CONDUITE : on pousse le lot ENTIER en un seul commit, ou on attend que l execution
+# precedente soit finie avant de pousser la suivante. Une relance suffit a reparer.
+
+on:
+  push:
+    paths:
+      - '.github/workflows/liens-amazon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: liens-amazon
+  cancel-in-progress: false
+
+jobs:
+  liens-amazon:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Poser les blocs de liens
+        run: |
+          python3 - <<'PY'
+          import pathlib, re
+
+          # 25/10/2026 : un identifiant de suivi par emplacement de clic (demande du projet).
+          TAG_PANIER = 'rskacart-20'   # lien « Add it to your Amazon cart »
+          TAG_TEXTE = 'rskatext-20'    # lien texte /dp/<ASIN>
+          SCRIPT_VIA = '<script id="via-tag">(function(){try{var m=location.search.match(/[?&]via=([a-z]+)/);var v=m?m[1]:sessionStorage.getItem("via");if(!v)return;if(m)sessionStorage.setItem("via",v);var t={quiz:"rskaquiz-20",size:"rskasize-20",wheel:"rskawheel-20",gear:"rskagear-20",kit:"rskakit-20"}[v];if(!t)return;var a=document.querySelectorAll(\'a[href*="amazon.com"]\');for(var i=0;i<a.length;i++){a[i].href=a[i].href.replace(/([?&](?:tag|AssociateTag)=)(?:rskatext|rskacart|rollerskateae)-20/,"$1"+t);}}catch(e){}})();</script>\n'
+
+          ARTICLES = {
+            # ── LOT 8, ajoute le 22/08/2026. UNE PAGE SUR DIX, ET C'EST VOULU.
+            # Neuf des dix pages du lot sont de la technique ou de la danse pure — le demi-tour
+            # sur un pied, le saut, le bounce, le dribble, le catwalk, le shuffle. On n'y vend
+            # rien parce qu'il n'y a rien a y vendre. La seule page du lot qui USE une piece est
+            # celle du moonwalk : le pas se fait entierement sur le frein avant, et un frein
+            # s'use.
+            # ⚠ ET LE CHIFFRE QUI COMMANDE CETTE RETENUE EST MESURE, PAS SUPPOSE : le compte
+            # Pinterest a rendu UN SEUL clic sortant sur les trente jours qui precedent le
+            # 22/08/2026, pour 1 430 impressions. Tant que ce nombre reste a un, equiper plus de
+            # pages ne peut rien rapporter — la chaine se rompt entre l'epingle et le site, pas
+            # entre le site et Amazon.
+            'moonwalk-is-a-simultaneous-swap': (
+              'B07WJ6MRSY',
+              'BONT ToeGo Roller Skate Toe Stops, 2 Pack',
+              'The whole step is done on the toe stop, so the toe stop is what wears out '
+              '— and a worn stop is what makes the swap chatter instead of bite.'),
+            # ── QUATRE PAGES-PORTES EQUIPEES LE 25/08/2026, SESSION 104, sur ordre du propriétaire.
+            # Ce sont les pages dont le titre EST la question du debutant : ce sont donc celles
+            # qui recoivent la recherche, et aucune ne portait de lien.
+            # ⛔ La liste de dette qui trainait dans un document interne — wash-your-liners,
+            # never-loosen-your-laces, fifteen-minute-practice-routine, plow-stop,
+            # first-three-moves — etait PERIMEE : les cinq sont equipees depuis.
+            # ⛔ ET UNE CINQUIEME PAGE A ETE ECARTEE VOLONTAIREMENT : pronation-is-an-injury-problem.
+            # Son remede est un geste — corriger la pose du patin — et pas un produit. Y coller
+            # une semelle contredirait la page, et un lien decoratif fait baisser le taux de clic
+            # de TOUS les autres blocs du site.
+            'what-gear-do-you-need-to-start-roller-skating': (
+              'B002WTT2J2',
+              'Triple Eight Saver Series Pad Set, knee, elbow and wrist',
+              'This page names the four pieces of protection; three of them come in this one box.'),
+            'how-do-you-fall-and-get-up-on-roller-skates': (
+              'B00GG7AYLG',
+              'JBM Knee Pads, Elbow Pads and Wrist Guards',
+              'A forward fall lands on knee pads and wrist guards, which is the fall this page '
+              'teaches you to take on purpose.'),
+            'how-do-you-stop-on-roller-skates': (
+              'B08YNT93LB',
+              '82A Rubber Roller Skate Toe Stops with Screws, 2 pack',
+              'This page calls the brake a tool rather than a technique, and a tool wears out.'),
+            'are-inline-skates-or-quad-skates-easier-for-beginners': (
+              'B0DSLVFQWP',
+              'Rollerblade Zetrablade Women Fitness Inline Skate',
+              'This page comes down on the inline side for stability, and this is the wide '
+              'fitness frame that argument is about.'),
+
+            'protective-gear-checklist': (
+              'B00GG7AYLG',
+              'JBM Adult &amp; Kids Knee Pads, Elbow Pads and Wrist Guards',
+              'All four pieces come in one box, which is the whole argument of this page: '
+              'wrist guards are not bought on their own.'),
+            'how-to-size-roller-skates': (
+              'B07N7PZ84S',
+              'Impala Quad Skate',
+              'Sold in US sizing, which is the scale this page walks you through.'),
+            'skate-bearings-explained': (
+              'B000FDRQ1S',
+              'Bones REDS Skateboard Bearings, 8 pack',
+              'Eight bearings is exactly one full set: two per wheel, four wheels.'),
+            'outdoor-vs-indoor-wheels': (
+              'B09WR3DS2F',
+              'CLAS FOX 78A Quad Roller Skate Wheels, 8 pack',
+              '78A is the soft outdoor hardness this page argues for.'),
+            'skate-tool-kit': (
+              'B0DJRVHP11',
+              'GHOST BOARDS All-In-One Skate Tool',
+              'One tool for the axle nuts, the toe stop and the trucks.'),
+            'skate-bag-essentials': (
+              'B0CB5NDLCW',
+              'HEXIFUL Skate Bag for Ice, Inline, Roller and Quad Skates',
+              'One bag that holds the skates and the pads together, which is the whole point of the list on this page.'),
+            'socks-that-cover-the-cuff': (
+              'B09H4M922T',
+              'SATINIOR Knee High Skating Socks, 6 pairs',
+              'Knee high is the length that clears the top of the cuff.'),
+            'y2k-skate-outfit': (
+              'B08F5CPM5N',
+              'Syhood Neon Knee High Socks for Roller Skating',
+              'The sock is the piece that carries this whole look.'),
+            'clean-your-bearings': (
+              'B0009W5L6C',
+              'SONIC Turbo Wash Skate Bearing Cleaning Kit',
+              'A citrus cleaner and the jar you shake the bearings in, which is the method described here.'),
+            'brake-pad-wear': (
+              'B08YNT93LB',
+              '82A Rubber Roller Skate Toe Stops with Screws, 2 pack',
+              'A worn pad gets replaced, never repaired.'),
+            'toe-stop-vs-t-stop': (
+              'B00US7LEJG',
+              'Sure-Grip Carrera Toe-Stop',
+              'A 5/8 inch stem stop, the adjustable kind this page compares.'),
+            'when-to-replace-wheels': (
+              'B08XQHHSQW',
+              'Tanzfrosch 8 Roller Skate Wheels with Bearings Installed',
+              'Eight wheels is one full change, and the bearings come already pressed in.'),
+            'dry-your-skates': (
+              'B001J4HQ76',
+              'PEET Original Electric Shoe and Boot Dryer',
+              'It dries the boot from the inside, which is the part a radiator never reaches.'),
+            'skate-smell': (
+              'B00CFM8DI2',
+              'Boot Bananas Original Shoe Deodorizer',
+              'Sized for a boot rather than a sneaker, and it stays in between sessions.'),
+            'how-to-fall-safely': (
+              'B0000DZIJ6',
+              'Triple Eight Wristsaver Wrist Guards',
+              'A forward fall lands on the hands, which is exactly the fall this page describes.'),
+            'inline-skates-are-more-stable': (
+              'B0DSLVFQWP',
+              'Rollerblade Zetrablade Women Fitness Inline Skate',
+              'A wide fitness frame, which is the shape that makes the argument on this page hold.'),
+            'pastel-skate-aesthetic': (
+              'B0781889KN',
+              'Moxi Beach Bunny Roller Skates for Women',
+              'The skate this whole colour palette was built around.'),
+
+            # ── LOT 7, ajoute le 22/08/2026. QUATRE PAGES SUR DIX SEULEMENT, ET C'EST VOULU.
+            # Six des dix pages du lot sont de la technique pure — l'appui en marche arriere,
+            # le nombril comme repere, l'ordre du transfert de poids, le pas du patineur. On
+            # n'y vend rien parce qu'il n'y a rien a y vendre, et poser un lien decoratif sur
+            # une page qui ne le porte pas fait baisser le taux de clic de TOUTES les autres.
+            # C'est le meme tri qui avait deja ecarte la peur en descente et les trottoirs.
+            #
+            # ⭐ LES QUATRE ARTICLES CI-DESSOUS ONT ETE REMPLACES LE 22/08/2026 PAR DES ARTICLES
+            # CHERCHES POUR LEUR PAGE. Ils portaient jusque-la des codes REPRIS d'autres pages du
+            # site, choisis la nuit du 21 au 22 parce qu'ils etaient deja sondes vivants. le propriétaire a
+            # demande le contraire, et il a raison : le meme jeu de protections apparaissait sur
+            # cinq pages. Les codes remplaces restent en service sur leur page d'origine.
+            # Les quatre nouveaux ont ete sondes le 22/08/2026 sur amazon.com, critere
+            # id="add-to-cart-button", avec l'article temoin inexistant en contre-epreuve.
+            # ⛔ 22/10/2026 : 'quad-toe-stop-quarter-turn' (B0BL3K8D31, butoirs reglables) SORTI
+            # du dictionnaire. La page a ete regeneree le 28/09/2026 (commit 7272e5c, le stop avant
+            # n'est plus presente comme un frein, decision du propriétaire) et elle n'a plus de bloc depuis.
+            # Aucune trace ne dit si ce retrait etait voulu. Le laisser ici aurait repose le bloc
+            # au premier declenchement, sur une page reecrite, sans relecture. Le remettre est
+            # une decision a part : rajouter l'entree ET relire la page.
+            'falling-is-a-descent': (
+              'B0000ASZ8S',
+              'Triple Eight KP 22 Heavy-Duty Knee Pads, pair',
+              'A hard cap is what lets a knee slide along the ground instead of catching on it, '
+              'and sliding is what turns a fall into the descent this page describes.'),
+            'the-kneeling-get-up': (
+              'B000YEPYWG',
+              'Triple Eight KP 44 Knee Pads, pair',
+              'The whole move is done from your knees, so the pad carries your weight for the '
+              'several seconds it takes to stand back up.'),
+            'roller-dance-vocabulary': (
+              'B08HMZNVQL',
+              'Quad Roller Skate Wheels, 95A indoor, 8 pack',
+              'Every move named on this page is danced on a rink floor, and a hard 95A wheel is '
+              'what lets the skate slide through a turn there instead of gripping.'),
+
+            # ── SIX PAGES ANCIENNES EQUIPEES LE 22/08/2026, apres un recensement du site
+            # ENTIER et non du seul lot du jour. Le recensement disait : soixante pages
+            # publiees, vingt et une equipees, trente-neuf sans lien — dont une seule est une
+            # redirection (`inline-skates-are-stable`), donc trente-huit vraies pages.
+            # Ces six-la avaient un article evident et personne ne l'avait pose.
+            'thirty-second-check': (
+              'B0DJRVHP11',
+              'GHOST BOARDS All-In-One Skate Tool',
+              'The check on this page finds a loose axle nut, and this is what tightens it.'),
+            'rotate-your-wheels': (
+              'B0DJRVHP11',
+              'GHOST BOARDS All-In-One Skate Tool',
+              'Rotating wheels means taking all eight off and putting them back, which is a '
+              'tool job from start to finish.'),
+            'how-to-get-up': (
+              'B00GG7AYLG',
+              'JBM Adult &amp; Kids Knee Pads, Elbow Pads and Wrist Guards',
+              'Getting up starts from the knees, and the knees got you there.'),
+            'never-bag-wet-skates': (
+              'B001J4HQ76',
+              'PEET Original Electric Shoe and Boot Dryer',
+              'This page tells you to get them out of the bag; this is what to do with them '
+              'once they are out.'),
+            'why-skates-hurt': (
+              'B09H4M922T',
+              'SATINIOR Knee High Skating Socks, 6 pairs',
+              'Cuff bite is on the list of reasons skates hurt, and a sock that clears the '
+              'cuff is the cheapest thing that fixes it.'),
+            't-stop-wheels-should-graze': (
+              'B08XQHHSQW',
+              'Tanzfrosch 8 Roller Skate Wheels with Bearings Installed',
+              'A T-stop wears one wheel far faster than the other seven, and a flat-spotted '
+              'wheel is replaced rather than saved.'),
+
+            # Les cinq articles ci-dessous sont poses le 22/08/2026 sur demande du propriétaire, dont le
+            # motif tient en un mot : encaisser. Chacun a ete cherche pour SA page, puis sonde
+            # sur amazon.com par la presence de id="add-to-cart-button", jamais par l'absence de
+            # la chaine « Currently unavailable ». Les deux pages de protections partagent le
+            # meme article parce que c'est le bon article pour les deux, pas par facilite.
+            'wash-your-liners': (
+              'B0B96BHXBM',
+              'Mesh Wash Bags, 4 pack, 16 x 20 inches',
+              'Liners go in the machine inside a bag, which is the whole point of this page: '
+              'the mesh keeps the laces and hooks from chewing on everything else.'),
+            'never-loosen-your-laces': (
+              'B07GMYJMN3',
+              'Derby Laces CORE Waxed Skate Laces',
+              'Waxed laces hold the tension you tie them at instead of creeping loose over an '
+              'hour, which is the failure this page is about.'),
+            'fifteen-minute-practice-routine': (
+              'B0CPLCVK6N',
+              'Disc Cones with Carry Bag',
+              'Every drill in this routine needs something to skate around, and flat discs are '
+              'the only markers that survive being rolled over.'),
+            'plow-stop': (
+              'B00GG7AYLG',
+              'JBM Adult &amp; Kids Knee Pads, Elbow Pads and Wrist Guards',
+              'The plow stop is learned by falling forward onto your knees a few times, so the '
+              'knee pads earn their place before the stop does.'),
+            'first-three-moves': (
+              'B00GG7AYLG',
+              'JBM Adult &amp; Kids Knee Pads, Elbow Pads and Wrist Guards',
+              'These are the first three things you try on skates, and all four pieces come in '
+              'one box so nothing is missing on the day you need it.'),
+
+            # -- LOT 9, ajoute le 12/09/2026, sur demande du poste de service 5 ("la
+            # conversion"). Deux pages de la liste de priorite du 12/09/2026 recoivent leur
+            # premier lien : chacune n'en portait aucun avant ce lot, verifie sur ce depot au
+            # moment de la pose. Une troisieme page visee au depart par la demande,
+            # what-gear-do-you-need-to-start-roller-skating, s'est revelee DEJA equipee dans ce
+            # depot (lot du 25/08/2026, session 104, code B002WTT2J2) alors que la copie locale
+            # du projet lue par la demande ne le montrait pas encore -- elle n'est donc pas
+            # retouchee ici. Les deux articles ci-dessous viennent du depot du poste 2 du
+            # 12/09/2026 (candidats pour les pages a forte intention), tous deux re-sondes
+            # vivants ce jour-la sur amazon.com.
+            # LOT 9 complete le 13/09/2026, poste de service 5 : le depot du poste 2 du
+            # 12/09/2026 sondait DEUX candidats pour cette page, pas un seul. Le premier
+            # (les chaussettes) a ete pose le 12/09/2026 ; le second (le sac de lavage en
+            # filet pour les chausses internes) ne l'avait jamais ete. Slug ajoute a
+            # A_REPOSER pour que l'ancien bloc a un seul article soit retire avant la pose
+            # du bloc a deux articles.
+            'why-do-my-feet-hurt-when-i-roller-skate': [
+              ('B09H4M922T',
+               'SATINIOR Knee High Skating Socks, 6 pairs',
+               'Socks have to clear the top of the boot, and knee-high is the length that '
+               'does it -- bare skin against a cuff is what turns into a raw stripe.'),
+              ('B0B96BHXBM',
+               'Mesh Wash Bags, 4 pack, 16 x 20 inches',
+               'Liners can be machine-washed cold and must then air-dry; a mesh bag keeps '
+               'the laces and hooks from chewing on everything else in the wash.'),
+            ],
+            'can-you-roller-skate-in-the-rain': (
+              'B010A5J5FU',
+              'DryGuy Shoe, Boot and Gear Electric Dryer',
+              'Sealing wet skates into a bag afterwards is the real danger this page names; '
+              'this dries them out instead of letting the water sit.'),
+          }
+
+          def bloc(items):
+              # items est une liste de (asin, nom, raison) depuis le 13/09/2026 -- une page
+              # peut porter plus d'un article dans le meme aside. Une liste a un seul
+              # element rend exactement l'ancien bloc a un seul article.
+              morceaux = []
+              for asin, nom, raison in items:
+                  panier = ('https://www.amazon.com/gp/aws/cart/add.html'
+                            '?AssociateTag=' + TAG_PANIER + '&amp;ASIN.1=' + asin + '&amp;Quantity.1=1')
+                  fiche = 'https://www.amazon.com/dp/' + asin + '?tag=' + TAG_TEXTE
+                  morceaux.append(
+                    '<p><strong>' + nom + '</strong> &mdash; ' + raison + '</p>\n'
+                    '<p><a href="' + panier + '" rel="sponsored nofollow">Add it to your Amazon cart</a>'
+                    ' &middot; <a href="' + fiche + '" rel="sponsored nofollow">see it on Amazon</a></p>\n')
+              # ⛔ 22/10/2026 : la phrase exacte d'Amazon passe AVANT le premier lien (contrat
+              # Associates US, section 5 ; un document interne § 9.0). Elle vit donc dans la
+              # phrase d'introduction du bloc ; celle du bas reste. Titre et introduction
+              # reprennent la forme servie depuis le 02/10 (corrige_pages_produit_2026-10-02.py).
+              # verifier_referencement.py refuse toute page ou un lien precede la phrase.
+              return (
+                '\n<aside class="gear">\n'
+                '<h2>What to get (optional &mdash; Amazon affiliate links)</h2>\n'
+                '<p class="gear-intro">Nothing on this page needs a purchase. If you do want the '
+                'gear the text talks about, this is it; the links below are Amazon affiliate links. '
+                'As an Amazon Associate I earn from qualifying purchases.</p>\n'
+                + ''.join(morceaux) +
+                '<p><small>As an Amazon Associate I earn from qualifying purchases. '
+                'Price and availability are set by Amazon and can change.</small></p>\n'
+                '</aside>\n')
+
+          # ⛔ CE WORKFLOW EST IDEMPOTENT : il ne retouche JAMAIS une page qui porte deja un bloc.
+          # Changer un code d'article dans le dictionnaire ci-dessus ne suffit donc PAS a changer
+          # la page en ligne — c'est la que le remplacement du 22/08/2026 se serait perdu en
+          # silence. Les slugs listes ici, et eux seuls, voient leur bloc RETIRE avant la pose,
+          # ce qui les fait repasser par le chemin normal. Rejoue tel quel, le workflow repose
+          # un bloc identique et n'envoie rien, parce que l'envoi est conditionne a un diff.
+          # ⛔ MISE A JOUR DU 25/08/2026, SESSION 104 : la surveillance du matin a trouve
+          # TROIS codes non achetables sur 25 sondes, apres trois jours a zero mort.
+          #   B005VV82EO Triple Eight Street Knee Pads -> fiche morte, aucun bouton
+          #   B010A5J5FU DryGuy               -> fiche PARENTE a variantes, pas achetable telle quelle
+          #   B0DSLT8BD5 Rollerblade Zetrablade -> meme cas exactement
+          # Les quatre pages qui les portaient sont listees ici pour que leur bloc soit RETIRE
+          # avant la pose : sans ca, l idempotence du workflow ferait disparaitre le
+          # remplacement en silence, exactement comme le 22/08.
+          # ⛔ VIDEE LE 22/10/2026. Les huit remplacements du 25/08 et du 13/09 sont en ligne
+          # depuis longtemps. Depuis le 02/10, les blocs servis ont ete retouches sur place
+          # (titre, introduction, bloc remonte avant l'encadre « Keep going ») et ceux de la
+          # pluie et du Y2K portent des articles absents du dictionnaire ci-dessus. Laisser ces
+          # slugs ici aurait, au premier declenchement, ARRACHE ces blocs et repose leur forme
+          # d'aout en bas de page. Un slug ne s'ajoute ici que pour un remplacement voulu, et se
+          # retire une fois le remplacement en ligne.
+          A_REPOSER = set()
+
+          poses = []
+          deja = []
+          absentes = []
+          reposes = []
+          sovrn_retires = 0
+
+          for slug, valeur in ARTICLES.items():
+              items = valeur if isinstance(valeur, list) else [valeur]
+              page = pathlib.Path('skate') / slug / 'index.html'
+              if not page.exists():
+                  absentes.append(slug)
+                  continue
+              texte = page.read_text(encoding='utf-8')
+
+              avant = texte
+              texte = re.sub(r'<a\b[^>]*sovrn\.co[^>]*>(.*?)</a>', r'\1', texte, flags=re.S)
+              if texte != avant:
+                  sovrn_retires += 1
+
+              if slug in A_REPOSER:
+                  sans_bloc = re.sub(r'\n?<aside class="gear">.*?</aside>\n?', '\n', texte, flags=re.S)
+                  if sans_bloc != texte:
+                      texte = sans_bloc
+                      reposes.append(slug)
+
+              # 25/10/2026 : toute page qui mene a Amazon porte le script via-tag (attribution
+              # outil -> achat, via_outils_2026-10-25.py ; regle `via` de verifier_referencement.py).
+              if 'aws/cart/add.html' in texte and 'id="via-tag"' not in texte and texte.count('</body>') == 1:
+                  texte = texte.replace('</body>', SCRIPT_VIA + '</body>')
+
+              if 'aws/cart/add.html' in texte:
+                  deja.append(slug)
+                  if texte != avant:
+                      page.write_text(texte, encoding='utf-8')
+                  continue
+
+              if '</main>' not in texte:
+                  absentes.append(slug + ' (pas de balise main)')
+                  continue
+
+              # Le bloc se pose avant le lien vers le guide d'achat, sinon avant l'encadre « Keep
+              # going », sinon en fin de texte : la place que le correctif du 02/10 lui a donnee.
+              for ancre in ('<!-- lien-guide -->', '<div class="next">', '</main>'):
+                  if ancre in texte:
+                      texte = texte.replace(ancre, bloc(items).lstrip('\n') + '\n' + ancre, 1)
+                      break
+              if 'id="via-tag"' not in texte and texte.count('</body>') == 1:
+                  texte = texte.replace('</body>', SCRIPT_VIA + '</body>')
+              page.write_text(texte, encoding='utf-8')
+              poses.append(slug)
+
+          print('BLOCS RETIRES POUR REMPLACEMENT :', reposes)
+          print('BLOCS POSES :', poses)
+          print('PAGES DEJA EQUIPEES :', deja)
+          print('PAGES INTROUVABLES OU SANS ANCRE :', absentes)
+          print('LIENS SOVRN MORTS RETIRES :', sovrn_retires)
+
+          if absentes:
+              raise SystemExit('Une page attendue manque ou n a pas la structure attendue.')
+          PY
+
+      - name: Verifier le montage avant d envoyer
+        run: |
+          echo "PAGES PORTANT UN LIEN DE PANIER AMAZON :"
+          grep -l 'aws/cart/add.html' skate/*/index.html | wc -l
+          echo "PAGES PORTANT ENCORE UN LIEN SOVRN MORT :"
+          grep -rl 'sovrn.co' skate/ | wc -l
+          if grep -rq 'sovrn.co' skate/; then
+            echo "UN LIEN SOVRN SUBSISTE : on n envoie rien."
+            exit 1
+          fi
+          if [ "$(grep -l 'aws/cart/add.html' skate/*/index.html | wc -l)" -ne 38 ]; then
+            echo "LE COMPTE DE PAGES EQUIPEES N EST PAS TRENTE-HUIT (quad-toe-stop-quarter-turn sorti le 22/10/2026) : on n envoie rien."
+            exit 1
+          fi
+          echo "TOUTE PAGE PORTANT UN LIEN DOIT PORTER LA MENTION AMAZON :"
+          for f in $(grep -l 'aws/cart/add.html' skate/*/index.html); do
+            grep -q 'As an Amazon Associate I earn from qualifying purchases.' "$f" || { echo "MENTION ABSENTE SUR $f"; exit 1; }
+          done
+          echo "OK"
+
+      - name: Envoyer seulement si quelque chose a change
+        run: |
+          if git diff --quiet -- skate; then
+            echo "RIEN DE NEUF - les blocs etaient deja en place."
+            exit 0
+          fi
+          git diff --name-only -- skate
+          git config user.name "liens-amazon-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add skate
+          git commit -m "Liens d affiliation Amazon sur douze pages de materiel de plus"
+          git push

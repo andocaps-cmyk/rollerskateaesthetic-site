@@ -1,0 +1,95 @@
+name: Publication controlee
+
+# CE QUE FAIT CE FICHIER, POUR QUI N'A RIEN LU (pose le 09/10/2026)
+#
+# Cloudflare Pages ne publie plus `main`. Il publie la branche `prod`, et SEUL ce workflow
+# fait avancer `prod`. Pousser sur `main` ne met donc rien en ligne par soi-meme : la mise en
+# ligne passe toujours par le controleur de referencement.
+#
+#   1. il prend le dernier etat de `main` ;
+#   2. il lance `verifier_referencement.py` en mode BLOQUANT (hors ligne) ;
+#   3. si le controleur rend 0, il pousse `main` sur `prod` -> Cloudflare publie ;
+#      sinon il s'arrete en rouge, `prod` ne bouge pas, le site en ligne reste tel quel ;
+#   4. si `prod` a avance, il attend le deploiement puis lance le controle APRES DEPLOIEMENT
+#      (chaque og:image doit repondre 200 en image). Ce controle ne bloque rien : ses defauts
+#      s'ecrivent dans le journal et le resume de l'execution.
+#
+# L'ENVOI INDEXNOW n'est pas fait ici : « Crawler Hints » est active dans Cloudflare depuis le
+# 09/10/2026, et c'est Cloudflare qui previent les moteurs (protocole IndexNow) quand une page
+# change. Depuis le 29/10/2026 une cle IndexNow est aussi a la racine (c5a736f04f5ab60028263a607a9cb1f6.txt), pour
+# signaler a la main les pages d'un lot de refonte (signaler_indexnow.py, dossier du projet).
+#
+# POURQUOI DEUX DECLENCHEURS
+#
+# `push` couvre les envois faits a la main (ou par un agent avec le jeton du dossier). Mais un
+# envoi fait par une GitHub Action avec le jeton integre GITHUB_TOKEN (la fournee, Bluesky, les
+# chaines de liens) ne declenche AUCUN workflow : sans `workflow_run`, ces commits resteraient
+# sur `main` sans jamais etre publies. `workflow_run` relance ce fichier a la fin de chacune de
+# ces chaines, qu'elle ait pousse ou non ; si rien n'a change, `prod` est deja a jour et rien
+# n'est publie.
+#
+# LE JETON : GITHUB_TOKEN suffit pour pousser sur `prod` (permission contents: write). Un envoi
+# fait avec ce jeton ne declenche aucun workflow, donc aucune boucle ; Cloudflare, lui, le voit.
+#
+# COUT : depot prive, donc minutes GitHub Actions comptees. Une execution dure moins d'une
+# minute quand `prod` est deja a jour ; l'attente du deploiement (2 min) n'a lieu que si `prod`
+# a avance.
+
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows:
+      - "Fournee quotidienne"
+      - "Publication Bluesky"
+      - "Liens Amazon sur les pages de materiel"
+      - "Pied de page des pages skate"
+      - "Publication Instagram"
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publier
+  cancel-in-progress: false
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le dernier etat de main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Controle bloquant du referencement
+        run: python3 verifier_referencement.py
+
+      - name: Pousser main sur prod
+        id: pousser
+        run: |
+          git fetch origin prod
+          AVANT=$(git rev-parse origin/prod)
+          APRES=$(git rev-parse HEAD)
+          if [ "$AVANT" = "$APRES" ]; then
+            echo "prod est deja a $APRES : rien a publier."
+            echo "avance=non" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Avance rapide seulement : si prod n'est pas un ancetre de main, on s'arrete en rouge
+          # plutot que d'ecraser ce qui est en ligne.
+          git merge-base --is-ancestor "$AVANT" "$APRES" || {
+            echo "ARRET : prod ($AVANT) n'est pas un ancetre de main ($APRES)."; exit 1; }
+          git push origin HEAD:refs/heads/prod
+          echo "prod : $AVANT -> $APRES"
+          echo "avance=oui" >> "$GITHUB_OUTPUT"
+
+      - name: Controle apres deploiement (ne bloque pas)
+        if: steps.pousser.outputs.avance == 'oui'
+        run: |
+          sleep 120
+          python3 verifier_referencement.py --apres-deploiement

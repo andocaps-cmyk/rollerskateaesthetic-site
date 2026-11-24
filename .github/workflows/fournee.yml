@@ -1,0 +1,122 @@
+name: Fournee quotidienne
+
+# CE QUE FAIT CE FICHIER, POUR QUI N'A RIEN LU
+#
+# Il regenere le flux RSS du site a heure fixe, sur les serveurs de GitHub, et il le
+# renvoie dans ce depot. Cloudflare Pages surveille ce depot et publie tout seul derriere.
+# Pinterest releve ensuite le flux et cree les epingles. Aucune machine n'a besoin d'etre
+# allumee, aucune conversation n'a besoin d'etre ouverte.
+#
+# C'est le dernier maillon du critere 2 de l'objectif du projet : un revenu qui arrive une
+# seconde fois sans qu'aucun geste humain ne soit intervenu entre les deux.
+#
+# POURQUOI DEUX HORAIRES ALORS QUE LE CONTENU NE DEPEND QUE DE LA DATE
+#
+# Le mode `--fenetre` de build_feed.py rend un fichier identique a l'octet pres pour toute
+# la journee. Le second passage ne produit donc aucun commit et aucun deploiement : il ne
+# sert qu'a rattraper le premier s'il a echoue. Ca ne coute rien et ca evite qu'une panne
+# de dix minutes fasse sauter une journee de publication.
+#
+# LES HEURES SONT EN UTC, C'EST GITHUB QUI L'IMPOSE. 10 h UTC = 12 h a Paris en ete,
+# 16 h UTC = 18 h a Paris en ete. En hiver le passage tombe une heure plus tot a Paris,
+# et ca n'a aucune consequence : le contenu du flux depend du jour, pas de l'heure.
+
+# LE DECLENCHEUR `push` N'EST PAS UN OUBLI ET IL NE BOUCLE PAS
+#
+# Il est la pour deux raisons. D'abord il rend la mise en service verifiable tout de suite,
+# sans attendre le prochain passage horaire ni ouvrir le tableau de bord GitHub — c'est ce
+# qui a permis de prouver la chaine entiere le jour meme. Ensuite il garantit qu'un envoi
+# de contenu remet le flux d'aplomb dans la foulee.
+#
+# La boucle est ecartee deux fois. GitHub ne declenche AUCUN workflow sur un envoi fait avec
+# le jeton integre `GITHUB_TOKEN`, ce qui est exactement le cas de l'envoi ci-dessous ; et
+# le `if` du job refuse de toute facon de tourner quand l'auteur est le robot des Actions.
+on:
+  schedule:
+    - cron: "0 10 * * *"
+    - cron: "0 16 * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fournee
+  cancel-in-progress: false
+
+jobs:
+  fournee:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Regenerer le flux
+        run: python3 build_feed.py --fenetre
+
+      # Flipboard lit feed_archive.xml (pipe 206694), pas feed.xml. Rien ne le tenait a jour depuis
+      # le 21/09. maj_feed_archive.py garde les articles deja presents tels quels et n'ajoute que
+      # les articles dont le jour de sortie est aujourd'hui ou avant. En cas d'echec on revient au
+      # fichier du depot et on ne bloque pas l'envoi de feed.xml (Pinterest).
+      - name: Mettre a jour le catalogue Flipboard
+        run: |
+          python3 maj_feed_archive.py || {
+            echo "ECHEC du catalogue — fichier du depot conserve"
+            git checkout -- feed_archive.xml
+          }
+
+      # LE CONTROLE DES FINS D'EPINGLES (branche le 22/10/2026, controle_fins_flux.py). Le 18/10 la fin
+      # repetee a ete retiree de 20 epingles publiees, mais build_feed.py a continue de la coller sur chaque
+      # epingle neuve jusqu'au 22/10 : on avait corrige la sortie, pas la source. Rouge si une meme fin de
+      # 60 caracteres ou plus couvre plus de 30 % des items, ou si « nothing to buy » apparait. Un rouge fait
+      # echouer le job (courriel GitHub au propriétaire) et rien n'est pousse. Sur feed_archive.xml (Flipboard),
+      # seulement les articles publies depuis le 22/10/2026 : les anciens gardent l'ancienne fin, on ne
+      # les reecrit pas.
+      - name: Controler les fins des epingles
+        run: |
+          python3 controle_fins_flux.py feed.xml
+          # 29/10/2026 : catalogue regenere sans « nothing to buy » ; la phrase est refusee sur tous ses items,
+          # le controle des fins uniformes reste limite aux articles d'apres la correction de la source.
+          # 07/11/2026 : --minimum 3. Le 06/11, 2 items sur 6 partageaient une des 5 fins qui tournent (33 %) :
+          # rouge sur un echantillon trop petit, fournee bloquee. Une fin uniforme reste attrapee au 3e item.
+          python3 controle_fins_flux.py feed_archive.xml --depuis 2026-10-22 --minimum 3
+
+      # Le menu du site (pose le 08/10/2026, menu_du_site.py). Une page ecrite a la main ou par un
+      # agent sans le menu le recoit ici, a la fournee suivante. Idempotent : une page qui le porte
+      # deja n'est pas reecrite. En cas d'echec on revient aux pages du depot et on ne bloque pas
+      # l'envoi des flux.
+      - name: Poser le menu du site sur les pages qui ne l'ont pas
+        run: |
+          python3 menu_du_site.py || {
+            echo "ECHEC du menu — pages du depot conservees"
+            git checkout -- '*.html'
+          }
+
+      # LE CONTROLEUR DE REFERENCEMENT (pose le 09/10/2026, verifier_referencement.py). Il passe
+      # sur toutes les pages publiques APRES la generation et AVANT l'envoi : titre, description,
+      # canonical, un seul h1, auteur Cass (Person -> /about/) dans le texte et les donnees
+      # structurees, dateModified et date visible, og:image presente dans le depot, mention d'IA,
+      # mention Amazon, plan du site. Une seule page fautive fait echouer ce pas, donc le job
+      # s'arrete et rien n'est pousse. La correction se fait dans build_referencement.py.
+      - name: Controler le referencement de toutes les pages
+        run: python3 verifier_referencement.py
+
+      - name: Pousser seulement si le flux a change
+        run: |
+          if git diff --quiet -- feed.xml feed_archive.xml '*.html'; then
+            echo "RIEN DE NEUF — les flux du jour sont deja en place."
+            echo "Aucun envoi, donc aucun deploiement Cloudflare declenche."
+            exit 0
+          fi
+          echo "UN FLUX A CHANGE. Contenu de feed.xml :"
+          grep -o "<guid[^<]*</guid>" feed.xml || true
+          git diff --stat -- feed.xml feed_archive.xml '*.html'
+          git config user.name "fournee-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add feed.xml feed_archive.xml
+          git add -u -- '*.html'
+          git commit -m "Fournee du $(date -u +%F) — flux regenere par la GitHub Action"
+          git push

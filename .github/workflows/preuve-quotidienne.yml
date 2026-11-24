@@ -1,0 +1,50 @@
+# PREUVE QUOTIDIENNE — posee le 30/09/2026.
+#
+# Un message Telegram par jour au propriétaire, trois lignes mesurees : derniere « Fournee quotidienne »
+# reussie, derniere « Publication Bluesky » reussie (API GitHub), nombre de descriptions Pinterest
+# restant a reecrire (`_releves/descriptions_pinterest_restantes.txt`, pousse depuis `un document interne`).
+# VERT = les deux executions datent de moins de 26 h. ROUGE = la premiere ligne dit laquelle.
+# Detail et motif : en tete de `.github/preuve_quotidienne.py`.
+#
+# POURQUOI ICI ET PAS DANS UNE ROUTINE CLAUDE : toutes les routines du projet sont liees a
+# l'ordinateur du propriétaire, et une routine du nuage ne lit pas l'API d'un depot prive sans qu'on ecrive
+# un jeton dans son texte. Ici le jeton est fourni par GitHub a chaque passage, et rien ne depend
+# de l'ordinateur du propriétaire ni du planificateur de l'application de bureau (un bogue connu de l'outil local).
+#
+# 17 h 30 UTC : apres la fournee de 16 h 00 et la publication Bluesky de 16 h 40.
+# Les secrets TELEGRAM_BOT_TOKEN et TELEGRAM_CHAT_ID sont ceux de la routine
+# « Alerte Telegram — taches programmees en panne » (meme bot, meme conversation).
+
+name: Preuve quotidienne
+
+on:
+  schedule:
+    - cron: "30 17 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/preuve_quotidienne.py"
+      - ".github/workflows/preuve-quotidienne.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: preuve-quotidienne
+  cancel-in-progress: false
+
+jobs:
+  preuve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Mesurer et envoyer le message
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 .github/preuve_quotidienne.py

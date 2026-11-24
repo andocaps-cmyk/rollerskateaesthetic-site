@@ -1,0 +1,77 @@
+# GABARIT — A DEPOSER DANS LE DEPOT DU SITE SOUS `.github/workflows/echec-de-chaine.yml`
+#
+# ⛔ CE FICHIER NE TOURNE PAS LA OU IL EST. Il vit a la racine de la boite du poste 4 parce que ce
+# poste ne modifie pas le depot qu'il observe : il livre la garde, un autre la reprend et la pose.
+# Tant qu'il n'est pas dans `andocaps-cmyk/rollerskateaesthetic-site`, il ne surveille rien.
+#
+# CE QU'IL FAUT POSER EN MEME TEMPS QUE LUI, SINON IL SORT EN CODE 2 DES SON PREMIER PASSAGE :
+#   1. `.github/garde_chaines_de_publication.py`
+#      copie mot pour mot de
+#      `<instrument local>`
+#   2. `.github/CATALOGUE_chaines_de_publication.tsv`
+#      copie mot pour mot de
+#      `<instrument local>`
+#
+# POURQUOI LE MEME FICHIER DE GARDE DES DEUX COTES ET PAS DEUX ECRITURES DIFFERENTES : deux copies
+# d'une meme logique divergent, et la copie amputee est le defaut mesure du 11/08/2026 de ce
+# corpus. La garde lit ses deux chemins dans `GARDE_CHEMIN_WORKFLOWS` et `GARDE_CHEMIN_CATALOGUE`
+# pour cette raison, et pour aucune autre.
+#
+# POURQUOI CHEZ GITHUB ET PAS DANS UNE TACHE PROGRAMMEE DE L'APPLICATION CLAUDE : le planificateur
+# de l'application cesse de declencher apres 24 a 30 heures de fonctionnement de Windows — bogue
+# Anthropic 55631, ferme « non planifie ». C'est le motif deja ecrit en tete de `surveillance.yml`
+# du meme depot, et c'est le meme ici.
+#
+# ⛔ L'HEURE N'EST PAS LIBRE. 12 h 30 UTC, soit une heure APRES `surveillance.yml` (11 h 30 UTC).
+# Un controle des executions lance AVANT le passage du jour lirait l'execution de la veille et
+# dirait « au vert » sur une chaine qui va echouer dans l'heure.
+#
+# CE QU'IL ATTRAPE, ET CHACUN EST UN SILENCE AUJOURD'HUI :
+#   - n'importe laquelle des chaines du depot dont la derniere execution a conclu a l'echec ;
+#   - une chaine dont une execution des SEPT DERNIERS JOURS a conclu a l'echec alors que sa
+#     derniere execution est verte : un echec suivi d'un succes ne se lit nulle part ailleurs
+#     (ajoute le 17/09/2026, sur l'echec du 13/09/2026 de `fournee.yml` que rien n'avait dit) ;
+#   - une chaine DESACTIVEE (GitHub eteint seul une chaine a horaire apres 60 jours sans activite
+#     du depot) : elle n'echoue plus jamais, parce qu'elle ne tourne plus ;
+#   - une chaine a horaire MUETTE depuis plus de 48 heures ;
+#   - une chaine ajoutee au depot sans ligne au catalogue ;
+#   - un ecart entre les chaines du disque et celles que l'API connait.
+# Les chaines sont enumerees PAR L'API : une chaine ajoutee demain est couverte sans que ce
+# fichier soit reecrit.
+
+name: Echec d une chaine de publication
+
+on:
+  schedule:
+    - cron: "30 12 * * *"
+  workflow_dispatch:
+  # Ajoute le 30/09/2026 : le jeton du dossier n'a pas le droit `workflow_dispatch` (403). Pousser
+  # une modification de la garde, de son catalogue ou de ce fichier la relance donc tout de suite.
+  push:
+    branches: [main]
+    paths:
+      - ".github/garde_chaines_de_publication.py"
+      - ".github/CATALOGUE_chaines_de_publication.tsv"
+      - ".github/workflows/echec-de-chaine.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: echec-de-chaine
+  cancel-in-progress: false
+
+jobs:
+  echec-de-chaine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Controler toutes les chaines de publication
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GARDE_CHEMIN_WORKFLOWS: .github/workflows
+          GARDE_CHEMIN_CATALOGUE: .github/CATALOGUE_chaines_de_publication.tsv
+        run: python3 .github/garde_chaines_de_publication.py --racine .

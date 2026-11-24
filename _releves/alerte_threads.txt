@@ -1,0 +1,3 @@
+# Signal d'alerte Threads : tant que ce fichier existe, 1 publication par jour au plus. Supprimer le fichier leve l'alerte. Reporter la cause dans ETAT.md § 5.
+2026-11-15 17:38:12	refus de l'API a la publication de guide/aluminium-vs-nylon-skate-plates : HTTP 400 sur /29681910058073681/threads_publish : {"error":{"message":"Fatal","code":-1,"type":"OAuthException","error_subcode":4279047,"is_transient":false,"error_user_msg":"The post you're trying to publish has an invalid link attachment.","error_u
+2026-11-17 19:13:56	vues a zero sur les 2 publications du 2026-11-13 au 2026-11-16 (releve du 2026-11-16), alors que 11 plus anciennes en ont eu

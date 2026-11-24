@@ -1,0 +1,108 @@
+name: Pied de page des pages skate
+
+# Il reecrit le pied de page des cinquante pages skate/<slug>/index.html du site, sur les
+# serveurs de GitHub, et il renvoie le resultat dans ce depot. Cloudflare Pages surveille ce
+# depot et publie tout seul derriere.
+#
+# Le pied de page pose deux choses : un lien vers la page Contact, et la phrase que le contrat
+# Amazon Partenaires impose sur toute page portant un lien affilie. Sans cette phrase, toutes
+# les commissions du compte sont en risque, pas seulement une vente.
+#
+# POURQUOI UN WORKFLOW ET PAS UN ENVOI DEPUIS LA MACHINE
+#
+# L'environnement Linux de la machine qui pilote le projet ne demarre plus, donc ni git ni
+# git push ne sont disponibles. L'editeur web de GitHub, lui, ne traite qu'un fichier par
+# validation : cinquante validations a la main n'est pas une methode. Ce fichier deplace le
+# travail sur les serveurs de GitHub, ou Python et git existent.
+#
+# IL EST REJOUABLE SANS DANGER. La reecriture est idempotente : si le pied de page est deja
+# correct, aucun fichier ne change, git diff est vide et rien n'est envoye.
+
+on:
+  push:
+    paths:
+      - '.github/workflows/pied-de-page.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pied-de-page
+  cancel-in-progress: false
+
+jobs:
+  pied-de-page:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Reecrire le pied de page des pages skate
+        run: |
+          python3 - <<'PY'
+          import pathlib
+
+          DEBUT = '<p><a href="https://rollerskateaesthetic.com/">Home</a>'
+          FIN = '</div></footer>'
+          NOUVEAU = (
+              '<p><a href="https://rollerskateaesthetic.com/">Home</a> &middot; '
+              '<a href="https://rollerskateaesthetic.com/contact/">Contact</a> &middot; '
+              '<a href="https://rollerskateaesthetic.com/privacy/">Privacy</a></p>\n'
+              '<p>As an Amazon Associate I earn from qualifying purchases.</p>\n'
+              '</div></footer>'
+          )
+
+          pages = sorted(pathlib.Path('skate').glob('*/index.html'))
+          modifiees = 0
+          deja_bonnes = 0
+          sans_ancre = []
+
+          for page in pages:
+              texte = page.read_text(encoding='utf-8')
+              i = texte.find(DEBUT)
+              j = texte.find(FIN, i) if i >= 0 else -1
+              if i < 0 or j < 0:
+                  sans_ancre.append(str(page))
+                  continue
+              neuf = texte[:i] + NOUVEAU + texte[j + len(FIN):]
+              if neuf == texte:
+                  deja_bonnes += 1
+                  continue
+              page.write_text(neuf, encoding='utf-8')
+              modifiees += 1
+
+          print('PAGES TROUVEES :', len(pages))
+          print('PAGES MODIFIEES :', modifiees)
+          print('PAGES DEJA CORRECTES :', deja_bonnes)
+          print('PAGES SANS ANCRE DE PIED DE PAGE :', sans_ancre)
+
+          if sans_ancre:
+              raise SystemExit('Une page au moins n a pas le pied de page attendu.')
+          PY
+
+      - name: Verifier que la phrase Amazon est sur les cinquante pages
+        run: |
+          total=$(ls -d skate/*/ | wc -l)
+          avec=$(grep -l 'As an Amazon Associate I earn from qualifying purchases.' skate/*/index.html | wc -l)
+          contact=$(grep -l 'rollerskateaesthetic.com/contact/' skate/*/index.html | wc -l)
+          echo "PAGES : $total - AVEC LA PHRASE AMAZON : $avec - AVEC LE LIEN CONTACT : $contact"
+          if [ "$avec" -ne "$total" ] || [ "$contact" -ne "$total" ]; then
+            echo "COMPTE INCOMPLET : on n envoie rien."
+            exit 1
+          fi
+
+      - name: Envoyer seulement si quelque chose a change
+        run: |
+          if git diff --quiet -- skate; then
+            echo "RIEN DE NEUF - les pieds de page etaient deja en place."
+            exit 0
+          fi
+          echo "PAGES MODIFIEES :"
+          git diff --name-only -- skate
+          git config user.name "pied-de-page-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add skate
+          git commit -m "Pied de page : lien Contact et mention Amazon sur les pages skate"
+          git push

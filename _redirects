@@ -1,0 +1,204 @@
+# Deux pages traitaient le même sujet et se disputaient la même recherche.
+# On garde /skate/inline-skates-are-more-stable/ : elle est postérieure aux corrections
+# du propriétaire, elle porte le mecanisme exact qu'il a donne (coque rigide, cheville bloquee),
+# et elle ne s'appuie sur aucun argument quad inverifie.
+# L'epingle 15, deja publiee, continue de fonctionner : elle atterrit ici.
+/skate/inline-skates-are-stable/ /skate/inline-skates-are-more-stable/ 301
+
+# Les deux scripts de fabrication du site sont servis publiquement parce que la sortie
+# du build est la racine du depot. Ils ne contiennent aucun secret, mais ils n'ont rien
+# a faire dans les pages publiques. Ils restent dans le depot : la tache programmee de
+# 12 h et 18 h en aura besoin. On coupe seulement leur acces public.
+/build_feed.py / 301
+/build_pages.py / 301
+/build_pages_lot4.py / 301
+
+# Les deux CSV de lots sont entres dans le depot le 07/08/2026, parce que la GitHub Action
+# tourne sur les serveurs de GitHub et n'a acces a rien d'autre que le depot : sans eux,
+# build_feed.py n'a aucune source et la fournee ne peut pas etre autonome. Ils ne portent
+# aucun secret — ce sont les titres, textes et liens deja publics — mais ils n'ont rien a
+# faire dans les pages servies.
+/pinterest_lot2_bulk.csv / 301
+/pinterest_lot3_bulk.csv / 301
+/pinterest_lot4_bulk.csv / 301
+
+# Lot 5 (epingles 41 a 50), entre le 07/08/2026. Meme motif que pour les lots precedents :
+# le CSV doit vivre dans le depot pour que la GitHub Action ait une source, et le script de
+# pages est servi publiquement parce que la sortie du build est la racine du depot. Ni l'un
+# ni l'autre ne porte de secret, ni l'un ni l'autre n'a a etre servi.
+/pinterest_lot5_bulk.csv / 301
+/build_pages_lot5.py / 301
+
+# Lot 6 (epingles 51 a 60), entre le 14/08/2026. Meme motif que pour les lots precedents :
+# le CSV doit vivre dans le depot pour que la GitHub Action ait une source, et le script de
+# pages est servi publiquement parce que la sortie du build est la racine du depot. Ni l'un
+# ni l'autre ne porte de secret, ni l'un ni l'autre n'a a etre servi.
+/pinterest_lot6_bulk.csv / 301
+/build_pages_lot6.py / 301
+
+# ⛔ LOT 7 (epingles 61 a 70) — AJOUTE LE 22/08/2026, ET IL MANQUAIT DEPUIS LE 22/08 AU MATIN.
+# C'est exactement le defaut que la regle « tout fichier neuf de la racine du depot se range
+# ici DANS LE GESTE QUI LE CREE » existe pour empecher, commis une seconde fois : le CSV du
+# lot 7 et son script de pages etaient servis publiquement pendant que ceux des lots 2 a 6 et
+# du lot 8 ne l'etaient pas. Ils ne portent aucun secret ; la regle existait et personne ne
+# l'a appliquee au lot 7, ce qui est le vrai defaut.
+/pinterest_lot7_bulk.csv / 301
+/build_pages_lot7.py / 301
+
+# Lot 8 (epingles 71 a 80), entre le 22/08/2026. Meme motif que pour les lots precedents :
+# le CSV doit vivre dans le depot pour que la GitHub Action ait une source, et le script de
+# pages est servi publiquement parce que la sortie du build est la racine du depot. Ni l'un
+# ni l'autre ne porte de secret, ni l'un ni l'autre n'a a etre servi.
+/pinterest_lot8_bulk.csv / 301
+/build_pages_lot8.py / 301
+
+# Lot 9 (epingles 81 a 90), entre le 22/08/2026. Meme motif que pour les lots precedents :
+# le CSV doit vivre dans le depot pour que la GitHub Action ait une source, et le script de
+# pages est servi publiquement parce que la sortie du build est la racine du depot. Ni l'un
+# ni l'autre ne porte de secret, ni l'un ni l'autre n'a a etre servi.
+/pinterest_lot9_bulk.csv / 301
+/build_pages_lot9.py / 301
+
+# Lot 10 (epingles 91 a 100), entre le 24/08/2026. Meme motif que pour les lots precedents :
+# le CSV doit vivre dans le depot pour que la GitHub Action ait une source, et le script de
+# pages est servi publiquement parce que la sortie du build est la racine du depot. Ni l'un
+# ni l'autre ne porte de secret, ni l'un ni l'autre n'a a etre servi.
+/pinterest_lot10_bulk.csv / 301
+/build_pages_lot10.py / 301
+
+# Lot 11 (epingles 101 a 110), entre le 31/08/2026. Meme motif, et la regle est celle des
+# deux controles obligatoires avant un envoi : tout fichier neuf ajoute a la racine du depot
+# se range ici DANS LE GESTE QUI LE CREE. Le defaut fondateur est date du 07/08/2026, ou le
+# CSV du lot 4 et son script de pages ont ete servis publiquement pendant un temps parce que
+# personne ne les avait ajoutes en les creant.
+/pinterest_lot11_bulk.csv / 301
+/build_pages_lot11.py / 301
+
+# Lots 12 (epingles 111 a 117) et 13 (118 a 125). ⛔ LE LOT 12 MANQUAIT ICI DEPUIS LE
+# 13/09/2026 : son CSV et son script de pages ont ete servis publiquement un jour entier,
+# constate le 14/09/2026 en ajoutant le lot 13. C'est le defaut fondateur du 07/08/2026
+# rejoue a l'identique, et c'est la troisieme fois. Le second flux RSS, `build_feed_archive.py`,
+# entre le 14/09/2026 au matin, n'y etait pas non plus : il est range dans le meme geste.
+# Le flux `feed_archive.xml` lui-meme, lui, SE SERT — c'est un flux public, comme feed.xml.
+/pinterest_lot12_bulk.csv / 301
+/build_pages_lot12.py / 301
+/pinterest_lot13_bulk.csv / 301
+/build_pages_lot13.py / 301
+/build_feed_archive.py / 301
+
+# La porte de question a son generateur : build_portes.py. Comme les autres scripts de
+# fabrication, il est servi publiquement parce que la sortie du build est la racine du depot.
+# Il ne porte aucun secret, mais il n a rien a faire dans les pages publiques.
+/build_portes.py / 301
+
+# Le dossier des releves porte des chiffres de compte, pas des pages. Il ne se sert pas.
+/_releves/* / 301
+
+# Lot 14 (epingles 126 a 135), entre le 15/09/2026, DANS LE GESTE QUI A CREE LES DEUX
+# FICHIERS — ce que la regle demande depuis le 07/08/2026 et qui a ete oublie aux lots 7,
+# 11 et 12. Meme motif que pour les lots precedents : le CSV doit vivre dans le depot pour
+# que la GitHub Action ait une source, et le script de pages est servi publiquement parce
+# que la sortie du build est la racine du depot. Ni l'un ni l'autre ne porte de secret, ni
+# l'un ni l'autre n'a a etre servi.
+/pinterest_lot14_bulk.csv / 301
+/build_pages_lot14.py / 301
+
+# Lot 15 (epingles 136 a 145), entre le 17/09/2026, DANS LE GESTE QUI A CREE LES DEUX
+# FICHIERS — comme pour le lot 14, et pour la meme raison qu'aux lots 7, 11 et 12 ou ca avait
+# ete oublie. Meme motif que pour les lots precedents : le CSV doit vivre dans le depot pour
+# que la GitHub Action ait une source, et le script de pages est servi publiquement parce que
+# la sortie du build est la racine du depot. Ni l'un ni l'autre ne porte de secret, ni l'un ni
+# l'autre n'a a etre servi.
+/pinterest_lot15_bulk.csv / 301
+/build_pages_lot15.py / 301
+
+# Lot 16 (epingles 146 a 155), entre le 21/09/2026, DANS LE GESTE QUI A CREE LES DEUX
+# FICHIERS — comme pour les lots 14 et 15. Meme motif : le CSV doit vivre dans le depot pour
+# que la GitHub Action ait une source, et le script de pages est servi publiquement parce que
+# la sortie du build est la racine du depot. Ni l'un ni l'autre ne porte de secret, ni l'un ni
+# l'autre n'a a etre servi.
+/pinterest_lot16_bulk.csv / 301
+/build_pages_lot16.py / 301
+/pinterest_lot17_bulk.csv / 301
+/build_pages_lot17.py / 301
+/pinterest_lot18_bulk.csv / 301
+/build_pages_lot18.py / 301
+/pinterest_lot19_bulk.csv / 301
+/build_pages_lot19.py / 301
+/pinterest_lot20_bulk.csv / 301
+/build_pages_lot20.py / 301
+/pinterest_lot21_bulk.csv / 301
+/build_pages_lot21.py / 301
+/pinterest_lot22_bulk.csv / 301
+/build_pages_lot22.py / 301
+/pinterest_lot23_bulk.csv / 301
+/build_pages_lot23.py / 301
+
+# Le dossier des fichiers compiles Python est entre par megarde le 17/09/2026 avec le lot 15,
+# et il a ete retire du depot dans la foulee. La redirection reste : elle coute une ligne et
+# elle couvre le cas ou un .pyc y rentrerait de nouveau sans que personne le voie.
+/__pycache__/* / 301
+
+# Le controleur de referencement (09/10/2026), lance par fournee.yml. Range ici dans le geste
+# qui le cree, comme tout fichier neuf de la racine du depot.
+/verifier_referencement.py / 301
+# Le script des pages qui vendent (22/10/2026) : trace rejouable des retouches de titres,
+# descriptions, blocs produit et divulgation Amazon. Pas une page.
+/pages_qui_vendent_2026-10-22.py / 301
+
+# ⛔ QUATRIEME RECIDIVE, constatee le 12/10/2026 et rangee le 22/10/2026 : sept scripts de la
+# racine etaient servis en 200. La regle « se range ici dans le geste qui le cree » n'etait qu'un
+# commentaire ; depuis le 22/10/2026, verifier_referencement.py (regle « servi ») refuse toute
+# publication tant qu'un fichier de la racine qui n'est ni une page ni un flux n'a pas sa ligne ici.
+/build_about.py / 301
+/build_embeds.py / 301
+/build_referencement.py / 301
+/maj_feed_archive.py / 301
+/menu_du_site.py / 301
+/publier_reseaux.py / 301
+/surveillance.py / 301
+# Le controle des fins d'epingles (22/10/2026), lance par fournee.yml. Pas une page.
+/controle_fins_flux.py / 301
+# Script du 24/10/2026 qui retire les prix Amazon des pages /guide/ et pose « How we evaluated these ». Pas une page.
+/retirer_prix_amazon_2026-10-24.py / 301
+/retag_liens_amazon_2026-10-25.py / 301
+/via_outils_2026-10-25.py / 301
+# Script du 24/10/2026 qui pose les temoignages des AJOUT_*.md sur les guides. Pas une page.
+/ajouts_temoignages_2026-10-24.py / 301
+
+# 24/10/2026 : calculateur de cout et sa version integrable HORS LIGNE sur decision du propriétaire, le temps
+# d'obtenir une reponse ecrite d'Amazon sur les prix releves a la main (reglement Associates).
+# 302 et non 301 : c'est temporaire. Sources : <fichier local>
+# (LISEZMOI.md pour la remise en ligne : retirer ces quatre lignes et remettre les deux dossiers).
+# 29/10/2026 : scripts des chaines Threads et Bluesky, a ne pas servir (verifier_referencement.py les signalait).
+/publier_threads.py / 301
+/releve_threads.py / 301
+/rotation_publications.py / 301
+# 29/10/2026 : scripts des chaines Instagram et YouTube, a ne pas servir (regle « servi » de verifier_referencement.py).
+/publier_instagram.py / 301
+/releve_instagram.py / 301
+/publier_youtube.py / 301
+/visuels_reseaux.py / 301
+
+# 10/11/2026 : lien de passage compte vers Amazon (/va/, functions/va/). va_liens.py est la commande
+# de build Cloudflare (reecrit les liens Amazon des pages vers /va/) ; ni lui ni le code des fonctions
+# n'ont a etre servis publiquement.
+# 15/11/2026 : va_liens.py ne reecrit plus vers /va/ (liens Amazon directs) ; il pose le script de
+# comptage clic-amazon, qui appelle functions/api/clic.js. Meme regle : ni l'un ni l'autre servis.
+/va_liens.py / 301
+/functions/* / 301
+
+# 12/11/2026 (tache roller-verifie-le-site-qui-vend) : garde de suspension de chaine
+# (6e111b6, 08/11/2026), ajoutee a la racine et servie publiquement, oubliee dans ce fichier
+# dans le geste qui l'a creee (regle de un document interne). Pas une page.
+/suspension.py / 301
+
+# 15/11/2026 : generateur de la page /tools/starter-kit-cost/kit/ (liste du kit sans prix, bouton panier
+# Amazon de plusieurs articles), ajoute a la racine : range ici dans le geste qui le cree. Pas une page.
+/build_kit_list.py / 301
+
+# 20/11/2026 : generateur du formulaire e-mail MailerLite et sa liste de pages, ajoutes a la racine : ranges ici. Pas des pages.
+/build_formulaire_email.py / 301
+/pages_formulaire_email.txt / 301
+# 24/11/2026 : depot public neuf, README a la racine : range ici. Pas une page.
+/README.md / 301

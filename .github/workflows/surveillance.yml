@@ -1,0 +1,63 @@
+name: Surveillance de la chaine de publication
+
+# CE QUE FAIT CE FICHIER, POUR QUI N'A RIEN LU
+#
+# Il lance `surveillance.py` chaque jour sur les serveurs de GitHub. Ce script verifie que la
+# chaine qui mene une epingle du depot jusqu'au compte Pinterest n'est cassee nulle part, et il
+# sort en erreur des qu'un maillon lache. Une execution rouge fait envoyer un courriel par GitHub
+# au proprietaire du depot, tout seul.
+#
+# POURQUOI CETTE SURVEILLANCE EST ICI ET PAS DANS UNE TACHE PROGRAMMEE DE L'APPLICATION CLAUDE
+#
+# Le planificateur de taches de l'application Claude cesse de declencher quoi que ce soit apres
+# 24 a 30 heures de fonctionnement de Windows. C'est le un bogue connu de l'outil local, ferme
+# « non planifie » : il n'y a pas de correctif et il n'y en aura pas. La surveillance qui vivait
+# la-bas s'arretait donc des que la machine du proprietaire restait allumee un jour de trop, ou
+# des qu'il s'absentait — et rien ne le signalait nulle part.
+#
+# Ici, rien ne depend de sa machine. C'est la meme raison qui a fait mettre la fournee chez
+# GitHub, et c'est le meme dispositif.
+#
+# ⛔⛔ L'HEURE N'EST PAS LIBRE, ET LA DEPLACER CREE UNE FAUSSE ALERTE PAR JOUR
+#
+# Ce controle lit `feed.xml` et exige qu'il porte la derniere sortie que le calendrier de
+# `build_feed.py` attend ce jour-la (depuis le 22/10/2026 ; avant, une sortie d'AUJOURD'HUI) : le
+# lundi, le mardi, le jeudi et le vendredi la sortie du jour, les autres jours celle de la veille ou
+# rien. Or c'est `fournee.yml` qui ecrit cette sortie, a 10 h UTC en principe, souvent plusieurs
+# heures plus tard en fait. La sortie du jour n'est donc exigee qu'une fois que `fournee.yml` a
+# REUSSI aujourd'hui — c'est pour le lire que le job a `actions: read` et passe son jeton au
+# script. Avant, c'est le calendrier de la veille qui fait foi.
+#
+# Il doit aussi passer APRES l'ingestion de Pinterest, qui se fait vers 08 h 54 GMT — mesuree a
+# cette minute-la tous les jours du 09/08 au 22/08/2026.
+#
+# 11 h 30 UTC laisse une heure et demie de marge apres la fournee. C'est le seul motif du chiffre.
+#
+# ⛔ ET UNE ALERTE N'EST PAS UN ECHEC — la distinction est dans le script et elle est deliberee.
+# Une lecture du flux Pinterest qui echoue ne dit RIEN de l'etat du compte : elle rend une alerte,
+# jamais un rouge. Seule une lecture reussie peut conclure a une rupture.
+
+on:
+  schedule:
+    - cron: "30 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: surveillance
+  cancel-in-progress: false
+
+jobs:
+  surveillance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+
+      - name: Controler la chaine de publication
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 surveillance.py

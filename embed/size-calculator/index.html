@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roller Skate Size Calculator (embed) | Roller Skate Aesthetic</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://rollerskateaesthetic.com/tools/size-calculator/">
+<base target="_blank">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F7EEE5;--cream-deep:#EEE0D4;--ink:#2C2230;--coral:#E88A74;--lilac:#B7A2C4;--sage:#98AA96;--butter:#F0CD96}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Jost,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:18px;line-height:1.65}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 48px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,7vw,3rem);font-weight:900;margin:.8em 0 .3em}
+h2{font-size:clamp(1.4rem,4.5vw,1.9rem);font-weight:900;margin:2em 0 .5em}
+.answer{background:var(--cream-deep);border-left:5px solid var(--coral);padding:14px 18px;margin:1em 0}
+.tool{background:#fff;border:2px solid var(--ink);padding:18px;margin:1.5em 0;border-radius:2px}
+label{display:block;font-weight:600;margin:.9em 0 .25em}
+select,input{width:100%;font:inherit;padding:12px;border:2px solid var(--ink);background:var(--cream);color:var(--ink);border-radius:2px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+button{margin-top:1.1em;width:100%;font:inherit;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.9rem;background:var(--ink);color:var(--cream);border:0;padding:14px;border-radius:2px;cursor:pointer}
+button:hover{background:var(--coral);color:var(--ink)}
+#out{margin-top:1.2em}
+.res{background:var(--ink);color:var(--cream);padding:18px;border-radius:2px}
+.res .big{font-family:Fraunces,Georgia,serif;font-weight:900;font-size:1.6rem}
+.warn{background:var(--butter);padding:12px 16px;margin-top:12px;border-left:5px solid var(--coral);color:var(--ink)}
+.note{font-size:.9rem;opacity:.8}
+details{border-bottom:1px solid var(--lilac);padding:10px 0}summary{font-weight:600;cursor:pointer}
+table{border-collapse:collapse;width:100%;font-size:.9rem}td,th{border:1px solid var(--lilac);padding:4px 8px;text-align:left}
+.tw{overflow-x:auto}
+.res a{overflow-wrap:anywhere;word-break:break-all}
+/*site header and footer*/
+header.top{background:#EEE0D4;border-bottom:3px solid #2C2230;padding:20px 0}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 16px}
+header.top a{color:#2C2230;text-decoration-color:#E88A74;text-underline-offset:3px;text-decoration-thickness:2px}
+.brand{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:1rem;text-decoration:none;letter-spacing:-.01em}
+footer{border-top:3px solid #2C2230;background:#EEE0D4;padding:28px 0;margin-top:52px;font-size:.9rem;opacity:.8}
+footer .wrap{padding:0 16px}
+footer p{margin:0 0 .4em}
+footer a{color:#2C2230}
+a.cta,.res a.cta{display:block;text-align:center;margin:14px 0 10px;background:#E88A74;color:#2C2230;font-weight:600;font-size:1rem;line-height:1.3;text-decoration:none;padding:14px 16px;border-radius:4px;border:2px solid #F7EEE5;overflow-wrap:normal;word-break:normal}
+a.cta:hover,.res a.cta:hover{background:#F0CD96}
+/*byline*/.byline{font-size:.9rem;opacity:.65;margin:-.4rem 0 1.4rem;letter-spacing:.02em}
+
+body{background:#F7EEE5}
+.embed{max-width:700px;margin:0 auto;padding:10px}
+.embed .tool{margin:0}
+a.cta{display:block;text-align:center;margin:14px 0 10px;background:#E88A74;color:#2C2230;font-weight:600;font-size:1rem;line-height:1.3;text-decoration:none;padding:14px 16px;border-radius:4px;border:2px solid #F7EEE5}
+a.cta:hover{background:#F0CD96}
+.credit{text-align:center;font-size:.85rem;margin:10px 0 4px}
+.credit a{color:#2C2230;text-decoration-color:#E88A74;text-underline-offset:3px}
+.res ul a{color:#F0CD96}
+#shared-by{font-weight:600;margin-bottom:0}
+</style>
+</head>
+<body>
+<!-- Version integrable, ecrite par build_embeds.py a partir de tools/size-calculator/index.html : ne pas modifier a la main. -->
+<main class="embed">
+<div class="tool" id="tool">
+<label for="brand">Skate brand</label>
+<select id="brand"></select>
+<div class="row">
+<div><label for="sys">I know my</label>
+<select id="sys">
+<option value="cm">Foot length (cm)</option>
+<option value="usW">US women's shoe size</option>
+<option value="usM">US men's shoe size</option>
+<option value="eu">EU shoe size</option>
+<option value="uk">UK shoe size</option>
+<option value="kids">US kids' shoe size</option>
+</select></div>
+<div><label for="val">Value</label><input id="val" inputmode="decimal" placeholder="e.g. 25.5"></div>
+</div>
+<label><input type="checkbox" id="wide" style="width:auto;margin-right:8px">My feet are wide</label>
+<button id="go" type="button">Find my skate size</button>
+<div id="out" aria-live="polite"></div>
+</div>
+<p class="credit" id="shared-by" hidden></p>
+<p class="credit"><a href="https://rollerskateaesthetic.com/tools/size-calculator/?utm_source=embed&utm_medium=tool&utm_campaign=size-calculator" target="_blank" rel="noopener">Free tool by Roller Skate Aesthetic</a></p>
+</main>
+<script>
+
+var SITE = 'https://rollerskateaesthetic.com', TOOL = 'size-calculator', VIA = 'size';
+// 25/10/2026 : `via` = identifiant de suivi de l'outil, lu par le script via-tag des pages /guide/ (attribution outil -> achat Amazon).
+function ourUrl(path){ return SITE + path + '?utm_source=embed&utm_medium=tool&utm_campaign=' + TOOL + (path.indexOf('/guide/') === 0 ? '&via=' + VIA : ''); }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function host(u){ try { return new URL(u).hostname.replace(/^www\./, ''); } catch(e){ return ''; } }
+function cta(text, path){ return '<a class="cta" href="' + ourUrl(path) + '" target="_blank" rel="noopener">' + text + '</a>'; }
+// Fait defiler le document DU CADRE jusqu'a la reponse (jamais la page du club).
+function showOut(html){ var o = document.getElementById('out'); o.innerHTML = html; window.scrollTo({top: Math.max(0, o.getBoundingClientRect().top + window.pageYOffset - 8), behavior: 'smooth'}); }
+// Parametres du club : ?club=<nom> et ?accent=<RRGGBB>. Le nom est pose en textContent (jamais en HTML) ;
+// la couleur n'est retenue que si elle fait exactement 6 chiffres hexadecimaux.
+(function(){
+  var p; try { p = new URLSearchParams(window.location.search); } catch(e){ return; }
+  var club = (p.get('club') || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  if (club) { var s = document.getElementById('shared-by'); s.textContent = 'Shared by ' + club; s.hidden = false; }
+  var a = p.get('accent') || '';
+  if (/^[0-9a-fA-F]{6}$/.test(a)) {
+    var r = parseInt(a.slice(0,2),16), g = parseInt(a.slice(2,4),16), b = parseInt(a.slice(4,6),16);
+    var fg = (0.299*r + 0.587*g + 0.114*b) > 150 ? '#2C2230' : '#F7EEE5';
+    var st = document.createElement('style');
+    st.textContent = 'button:not(.ghost),button:not(.ghost):hover,a.cta,a.cta:hover,.res a.cta,.res a.cta:hover{background:#' + a + ';color:' + fg + '}button:not(.ghost):hover,a.cta:hover,.res a.cta:hover{filter:brightness(1.08)}';
+    document.head.appendChild(st);
+  }
+})();
+
+/*DATA_START*/
+const COLS = {
+  impala:   ['usW','usM','eu','uk','mm'],
+  rio:      ['usM','eu','uk','mm'],
+  chaya:    ['eu','usM','usW','uk','mm'],
+  powerslide:['eu','usM','usW','uk','mm'],
+  k2:       ['usM','usW','uk','eu','mm']
+};
+function mk(brand, rows){ return rows.map(r => Object.fromEntries(COLS[brand].map((c,i)=>[c,r[i]]))); }
+const BRANDS = {
+  impala: {
+    name: 'Impala (quad)',
+    sizeLabel: r => 'Impala size ' + r.usW + ' (US women\'s skate size)',
+    source: 'https://impalarollerskates.com/pages/size-chart', retrieved: '2026-10-07',
+    addMm: [0,0], halfRule: 'up',
+    advice: 'True to size: choose your usual shoe size. Between half sizes, go up to the next full size. Men: add two full sizes to your US men\'s size (men\'s 9 = Impala 11).',
+    wide: 'The Impala chart lists no width options. Check the model page before buying if your feet are wide.',
+    rows: mk('impala', [
+      [1,'12Y',32,null,190],[2,'13Y',33,null,200],[3,'1',34,null,205],[4,'2',35,null,210],[5,'3',36,null,220],
+      [6,'4',37,null,230],[7,'5',38,null,240],[8,'6',39,null,250],[9,'7',40,null,255],[10,'8',41,null,265],
+      [11,'9',42,null,270],[12,'10',43,null,280],[13,'11',44,null,290],[14,'12',45,null,300]])
+  },
+  rio: {
+    name: 'Rio Roller (quad)',
+    sizeLabel: r => 'Rio Roller UK ' + r.uk + ' / EU ' + r.eu + ' (insole ' + r.mm + ' mm)',
+    source: 'https://www.rioroller.com/_files/ugd/34d506_e3ea9499aebd4d8ba029cce9d37bb6ec.pdf', retrieved: '2026-10-07',
+    addMm: [0,0],
+    advice: 'Rio says sizes can vary from your shoe size and often run a little bigger. The chart gives insole length (heel to big toe), so compare it with your foot length.',
+    wide: 'The Rio chart gives no width information. Check the model page.',
+    rows: mk('rio', [
+      ['12',29,'11J',200],['13',30.5,'12J',207],['1',32.5,'13J',213],['2',33,'1',220],['3',34,'2',227],['4',35.5,'3',233],
+      ['5',37,'4',240],['6',38,'5',253],['7',39.5,'6',260],['8',40.5,'7',266],['9',42,'8',272],['10',43,'9',279],
+      ['11',44.5,'10',286],['12',46,'11',293],['13',47,'12',300]])
+  },
+  chaya: {
+    name: 'Chaya (Jump 2.0 chart)',
+    sizeLabel: r => 'Chaya EU ' + r.eu + ' (mondo ' + r.mm + ' mm)',
+    source: 'https://powerslide.com/products/jump-2-0', retrieved: '2026-10-07',
+    addMm: [2,6],
+    advice: 'Measure at the end of the day. Chaya says to add 2-3 mm to your foot length for a precise fit, or 4-6 mm for a comfort fit; the size shown uses the comfort margin (+6 mm). This chart is for the Jump 2.0; check your model.',
+    wide: 'The Jump 2.0 uses the truFIT last: medium to wide in the front and ankle area.',
+    rows: mk('chaya', [
+      [36,5,6,4,230],[37,5.5,6.5,4.5,236],[38,6,7,5,243],[39,7,8,6,250],[40,7.5,8.5,6.5,257],[41,8,9,7,263],
+      [42,9,10,8,270],[43,10,11,9,277],[44,10.5,null,9.5,284],[45,11,null,10,292],[46,12,null,11,298]])
+  },
+  powerslide: {
+    name: 'Powerslide (inline)',
+    sizeLabel: r => 'Powerslide EU ' + r.eu + ' (mondo ' + r.mm + ' mm)',
+    source: 'https://cdn.shopify.com/s/files/1/0481/1119/0176/files/PS_how_to_find_your_correct_skate_size_compressed.pdf', retrieved: '2026-10-07',
+    addMm: [3,5],
+    advice: 'Powerslide says to add 3 to 5 mm to your foot length, taking your socks into account; the size shown uses +5 mm. Powerslide also says it is not necessary to buy inline skates one size larger, and to check the sizing chart of your exact model on its website.',
+    wide: 'Powerslide offers five width options: check the width of the model you are buying.',
+    rows: mk('powerslide', [
+      [38,6,7,5,242],[39,7,8,6,248],[40,7.5,8.5,6.5,255],[41,8,9,7,261],[42,9,10,8,268],[43,10,11,9,275],
+      [44,10.5,null,9.5,282],[45,11,null,10,289],[46,12,null,11,296],[47,12.5,null,11.5,303]])
+  },
+  k2: {
+    name: 'K2 (F.I.T. 80 Alu chart)',
+    sizeLabel: r => 'K2 EU ' + r.eu + ' / US men\'s ' + r.usM + ' (foot ' + (r.mm/10) + ' cm)',
+    source: 'https://k2skates.com/en-us/p/f-i-t-80-alu-inline-skates-2025', retrieved: '2026-10-07',
+    addMm: [0,0],
+    advice: 'K2 advises adding a few millimetres to your foot length for room to kick and glide, and rounding up to the next size when you are between sizes (28.7 cm -> 29 cm). The heel should stay put in the heel pocket. Unisex skates are sized on US men\'s sizes. Chart from the F.I.T. 80 Alu model page: check the chart of your exact model.',
+    wide: 'No width information found on the K2 chart. Check the model page.',
+    rows: mk('k2', [
+      [5,6,4,36.5,230],[6,7,5,38,240],[6.5,7.5,5.5,39,245],[7,8,6,39.5,250],[7.5,8.5,6.5,40,255],[8,9,7,40.5,260],
+      [8.5,9.5,7.5,41.5,265],[9,10,8,42,270],[9.5,10.5,8.5,42.5,275],[10,11,9,43.5,280],[10.5,null,9.5,44,285],
+      [11,null,10,44.5,290],[11.5,null,10.5,45,295],[12,null,11,46,300],[12.5,null,11.5,47,305],[13,null,12,48,310],[14,null,13,49,320]])
+  },
+  // Added 09/10/2026 (outils v3): each brand's own official chart, source URL in "source", read on "retrieved".
+  // A cell is a number, a [low, high] range as printed (e.g. US 6/6.5), or a printed label (kids "7J").
+  // mm = the length the chart gives for the size (foot or insole: see lengthIs); mmMin/mm = a measured range.
+  // noLength / noShoe: the brand gives no foot length, or says not to size by shoe size.
+  moxi: {"name": "Moxi (Beach Bunny, Jungle, Panther chart)", "kind": "Moxi size", "source": "https://www.moxiskates.com/pages/all-sizing-charts", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "foot length", "advice": "Moxi: \"Note that different skate models do fit differently. This is the Beach Bunny, Jungle, & Panther skates ONLY.\" \"Recommended fit is snug but not uncomfortable. Your toes should not be crunched in the toe box. All measurements are recommendations only. Sizing may vary based on personal preference and skill level.\"", "wide": "The Moxi chart gives no width information. Check the model page.", "rows": [{"label": "1", "usW": [1.5, 2], "mm": 198}, {"label": "2", "usW": [2.5, 3], "mm": 208}, {"label": "3", "usW": [3.5, 4], "mm": 216}, {"label": "4", "usW": [4.5, 5], "kids": [3.5, 4], "eu": [35, 36], "uk": [3, 3.5], "mm": 224}, {"label": "5", "usW": [5.5, 6], "kids": [4.5, 5], "eu": [36, 37], "uk": [4, 4.5], "mm": 230}, {"label": "6", "usW": [6.5, 7], "usM": 6, "kids": [5.5, 6], "eu": [37, 38], "uk": [5, 5.5], "mm": 238}, {"label": "7", "usW": [7.5, 8], "usM": [6.5, 7], "eu": [38, 39], "uk": [6, 6.5], "mm": 246}, {"label": "8", "usW": [8.5, 9], "usM": [7.5, 8], "eu": [39, 40], "uk": [7, 7.5], "mm": 256}, {"label": "9", "usW": [9.5, 10], "usM": [8.5, 9], "eu": [40, 41], "uk": [8, 8.5], "mm": 264}, {"label": "10", "usW": [10.5, 11], "usM": [9.5, 10], "eu": [41, 42], "uk": [9, 9.5], "mm": 271}]},
+  riedell: {"name": "Riedell (low-cut boots chart)", "kind": "Riedell size", "source": "https://roller.riedellskates.com/Portals/1/Images/charts/Riedell-Roller-Sizing-Guide_Low-Cut-Boots_REV.pdf (page 5)", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "foot length", "advice": "Riedell: \"Please note: This chart is meant to serve as a guide for finding your proper Riedell fit. Final Riedell size determination should be made by an authorized fit technician.\" \"Note: Your Riedell skate size is the longest of your 2 length measurements and the wider of your 2 width measurements of your feet.\" This chart is for Riedell low-cut boots; high-top boots have their own chart.", "wide": "Riedell publishes width charts by last (from narrow to wide EE) in the same sizing guide. Check the width of the model you are buying.", "rows": [{"label": "3", "usM": 3.5, "usW": 5, "eu": 35, "uk": 2.5, "mm": 220}, {"label": "3.5", "usM": 4, "usW": 5.5, "eu": 35.5, "uk": 3, "mm": 224}, {"label": "4", "usM": 4.5, "usW": 6, "eu": 36, "uk": 3.5, "mm": 228}, {"label": "4.5", "usM": 5, "usW": 6.5, "eu": 36.5, "uk": 4, "mm": 232}, {"label": "5", "usM": 5.5, "usW": 7, "eu": 37, "uk": 4.5, "mm": 236}, {"label": "5.5", "usM": 6, "usW": 7.5, "eu": 37.5, "uk": 5, "mm": 241}, {"label": "6", "usM": 6.5, "usW": 8, "eu": 38, "uk": 5.5, "mm": 245}, {"label": "6.5", "usM": 7, "usW": 8.5, "eu": 39, "uk": 6, "mm": 249}, {"label": "7", "usM": 7.5, "usW": 9, "eu": 39.5, "uk": 6.5, "mm": 253}, {"label": "7.5", "usM": 8, "usW": 9.5, "eu": 40, "uk": 7, "mm": 258}, {"label": "8", "usM": 8.5, "usW": 10, "eu": 41, "uk": 7.5, "mm": 262}, {"label": "8.5", "usM": 9, "usW": 10.5, "eu": 42, "uk": 8, "mm": 266}, {"label": "9", "usM": 9.5, "usW": 11, "eu": 42.5, "uk": 8.5, "mm": 270}, {"label": "9.5", "usM": 10, "usW": 11.5, "eu": 43, "uk": 9, "mm": 274}, {"label": "10", "usM": 10.5, "usW": 12, "eu": 43.5, "uk": 9.5, "mm": 279}, {"label": "10.5", "usM": 11, "usW": 12.5, "eu": 44, "uk": 10, "mm": 283}, {"label": "11", "usM": 11.5, "usW": 13, "eu": 45, "uk": 10.5, "mm": 287}, {"label": "11.5", "usM": 12, "usW": 13.5, "eu": 45.5, "uk": 11, "mm": 292}, {"label": "12", "usM": 12.5, "usW": 14, "eu": 46.5, "uk": 11.5, "mm": 295}]},
+  riedellkids: {"name": "Riedell kids (youth & junior chart)", "kind": "Riedell size", "source": "https://roller.riedellskates.com/Portals/1/Images/charts/Riedell-Roller-Sizing-Guide_High-Top-Boots.pdf (page 5)", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "foot length", "advice": "Riedell: \"Please Note: This chart is meant to serve as a guide for finding your proper Riedell fit. Final Riedell size determination should be made by an authorized fit technician.\" YTH = youth, J = junior. This chart has no US shoe-size column: measure the foot.", "wide": "Riedell publishes a youth & junior width chart (narrow, medium, wide) in the same sizing guide.", "rows": [{"label": "6YTH", "eu": 20.5, "uk": 4.5, "mm": 132}, {"label": "7YTH", "eu": 21.5, "uk": 5, "mm": 140}, {"label": "8YTH", "eu": 22.5, "uk": 5.5, "mm": 148}, {"label": "9YTH", "eu": 23.5, "uk": 6.5, "mm": 157}, {"label": "10YTH", "eu": 24.5, "uk": 7.5, "mm": 165}, {"label": "11YTH", "eu": 26, "uk": 8.5, "mm": 173}, {"label": "11 1/2YTH", "eu": 27, "uk": 9, "mm": 178}, {"label": "12YTH", "eu": 27.5, "uk": 9.5, "mm": 182}, {"label": "12 1/2YTH", "eu": 28, "uk": 10, "mm": 186}, {"label": "13YTH", "eu": 28.5, "uk": 10.5, "mm": 191}, {"label": "13 1/2YTH", "eu": 29, "uk": 11, "mm": 194}, {"label": "1J", "eu": 30, "uk": 11.5, "mm": 198}, {"label": "1 1/2J", "eu": 31, "uk": 12, "mm": 203}, {"label": "2J", "eu": 31.5, "uk": 12.5, "mm": 208}, {"label": "2 1/2J", "eu": 32, "uk": 13, "mm": 212}, {"label": "3J", "eu": 32.5, "uk": 13.5, "mm": 216}, {"label": "3 1/2J", "eu": 33, "uk": 1, "mm": 220}]},
+  rollerblade: {"name": "Rollerblade (Zetrablade chart, men's)", "kind": "Rollerblade size", "source": "https://www.rollerblade.com/storage/Product/en_RB_SizeChartA4_Zetrablade_ENG.jpg", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "measured foot length (a range per size)", "advice": "Rollerblade: \"Simple Method: We suggest selecting your normal shoe size.\" \"Detailed Method: While the Simple Method works for most people, a more accurate fit can be found by following the instructions below.\" Chart for the Zetrablade (men's): Rollerblade publishes a chart for each model.", "wide": "The Rollerblade chart gives no width information. Check the model page.", "rows": [{"label": "US 6/6.5, EU 38/38.5 (24.0/24.5 cm)", "usM": [6, 6.5], "eu": [38, 38.5], "uk": [5, 5.5], "mm": 245, "mmMin": 236}, {"label": "US 7/7.5, EU 39/40 (25.0/25.5 cm)", "usM": [7, 7.5], "eu": [39, 40], "uk": [6, 6.5], "mm": 255, "mmMin": 246}, {"label": "US 8/8.5, EU 40.5/41 (26.0/26.5 cm)", "usM": [8, 8.5], "eu": [40.5, 41], "uk": [7, 7.5], "mm": 265, "mmMin": 256}, {"label": "US 9/9.5, EU 42/42.5 (27.0/27.5 cm)", "usM": [9, 9.5], "eu": [42, 42.5], "uk": [8, 8.5], "mm": 275, "mmMin": 266}, {"label": "US 10/10.5, EU 43/44 (28.0/28.5 cm)", "usM": [10, 10.5], "eu": [43, 44], "uk": [9, 9.5], "mm": 285, "mmMin": 276}, {"label": "US 11/11.5, EU 44.5/45 (29.0/29.5 cm)", "usM": [11, 11.5], "eu": [44.5, 45], "uk": [10, 10.5], "mm": 295, "mmMin": 286}, {"label": "US 12/12.5, EU 45.5/46 (30.0/30.5 cm)", "usM": [12, 12.5], "eu": [45.5, 46], "uk": [11, 11.5], "mm": 305, "mmMin": 296}, {"label": "US 13/13.5, EU 47/47.5 (31.0/31.5 cm)", "usM": [13, 13.5], "eu": [47, 47.5], "uk": [12, 12.5], "mm": 315, "mmMin": 306}]},
+  rollerbladew: {"name": "Rollerblade (Zetrablade W chart, women's)", "kind": "Rollerblade size", "source": "https://www.rollerblade.com/storage/Product/en_SizeChartA4_ZetrabladeW_ENG.jpg", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "measured foot length (a range per size)", "advice": "Rollerblade: \"Simple Method: We suggest selecting your normal shoe size. These skates can fit up to a half size larger than indicated.\" Chart for the Zetrablade W: Rollerblade publishes a chart for each model.", "wide": "The Rollerblade chart gives no width information. Check the model page.", "rows": [{"label": "US 5/5.5, EU 35/36 (22.0/22.5 cm)", "usW": [5, 5.5], "eu": [35, 36], "uk": [3, 3.5], "mm": 225, "mmMin": 216}, {"label": "US 6/6.5, EU 36.5/37 (23.0/23.5 cm)", "usW": [6, 6.5], "eu": [36.5, 37], "uk": [4, 4.5], "mm": 235, "mmMin": 226}, {"label": "US 7/7.5, EU 38/38.5 (24.0/24.5 cm)", "usW": [7, 7.5], "eu": [38, 38.5], "uk": [5, 5.5], "mm": 245, "mmMin": 236}, {"label": "US 8/8.5, EU 39/40 (25.0/25.5 cm)", "usW": [8, 8.5], "eu": [39, 40], "uk": [6, 6.5], "mm": 255, "mmMin": 246}, {"label": "US 9/9.5, EU 40.5/41 (26.0/26.5 cm)", "usW": [9, 9.5], "eu": [40.5, 41], "uk": [7, 7.5], "mm": 265, "mmMin": 256}, {"label": "US 10/10.5, EU 42/42.5 (27.0/27.5 cm)", "usW": [10, 10.5], "eu": [42, 42.5], "uk": [8, 8.5], "mm": 275, "mmMin": 266}]},
+  rollerbladekids: {"name": "Rollerblade kids (Apex adjustable chart)", "kind": "Rollerblade size", "source": "https://www.rollerblade.com/storage/Product/en_RB_SizeChartA4_Apex_ENG.jpg", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "measured foot length (a range per size)", "advice": "Rollerblade: \"Simple Method: We suggest selecting your normal shoe size within the size range.\" The size ranges overlap: a foot can fit two settings.", "wide": "The Rollerblade chart gives no width information.", "rows": [{"label": "adjustable 12J-1 US, EU 29-32 (18.5-20.5 cm)", "eu": [29, 32], "mm": 210, "mmMin": 181}, {"label": "adjustable 2-5 US, EU 33-36 (21.0-23.0 cm)", "eu": [33, 36], "mm": 240, "mmMin": 206}, {"label": "adjustable 5.5-7.5 US, EU 37-40.5 (23.5-25.5 cm)", "eu": [37, 40.5], "mm": 260, "mmMin": 226}]},
+  bladerunner: {"name": "Bladerunner by Rollerblade (Advantage Pro XT chart)", "kind": "Bladerunner size", "source": "https://www.rollerblade.com/storage/Product/en_BR_SizeChartA4_Advantage_ENG.jpg", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "measured foot length (a range per size)", "advice": "Bladerunner: \"Simple Method: We suggest selecting your normal shoe size. These skates can fit up to a half size larger than indicated.\" The US column is US men's sizes.", "wide": "The Bladerunner chart gives no width information. Check the model page.", "rows": [{"label": "EU 35 (22.0 cm)", "eu": 35, "uk": 3, "mm": 225, "mmMin": 216}, {"label": "EU 36.5 (23.0 cm)", "eu": 36.5, "uk": 4, "mm": 235, "mmMin": 226}, {"label": "US 6, EU 38 (24.0 cm)", "usM": 6, "eu": 38, "uk": 5, "mm": 245, "mmMin": 236}, {"label": "US 7, EU 39 (25.0 cm)", "usM": 7, "eu": 39, "uk": 6, "mm": 255, "mmMin": 246}, {"label": "US 8, EU 40.5 (26.0 cm)", "usM": 8, "eu": 40.5, "uk": 7, "mm": 265, "mmMin": 256}, {"label": "US 9, EU 42 (27.0 cm)", "usM": 9, "eu": 42, "uk": 8, "mm": 275, "mmMin": 266}, {"label": "US 10, EU 43 (28.0 cm)", "usM": 10, "eu": 43, "uk": 9, "mm": 285, "mmMin": 276}, {"label": "US 11, EU 44.5 (29.0 cm)", "usM": 11, "eu": 44.5, "uk": 10, "mm": 295, "mmMin": 286}, {"label": "US 12, EU 45.5 (30.0 cm)", "usM": 12, "eu": 45.5, "uk": 11, "mm": 305, "mmMin": 296}, {"label": "US 13, EU 47 (31.0 cm)", "usM": 13, "eu": 47, "uk": 12, "mm": 315, "mmMin": 306}]},
+  rollerderby: {"name": "Roller Derby (size conversion chart, kids included)", "kind": "Roller Derby size", "source": "https://cdn.shopify.com/s/files/1/0619/7674/0048/products/RDsizechart-web.jpg", "retrieved": "2026-10-09", "noLength": "The Roller Derby chart gives no foot length: use your US, EU or UK shoe size instead.", "advice": "Roller Derby: \"Our skates are in U.S. sizing. Enclosed is a U.S./Metric sizing chart for your reference. How you prefer your fit determines your size. Skaters preferring a tighter \"performance fit\" would size down a half to one size for a snug fit. Some skaters prefer a comfort fit which generally results in matching their current shoe size. The Size Conversion Chart below may not be exact, but can be used as a reference point for size conversion.\"", "wide": "The Roller Derby chart gives no width information. Check the model page.", "rows": [{"label": "US kids 7 J / EU 23", "kids": "7J", "eu": 23, "uk": "6J"}, {"label": "US kids 8 J / EU 25", "kids": "8J", "eu": 25, "uk": "7J"}, {"label": "US kids 9 J / EU 26", "kids": "9J", "eu": 26, "uk": "8J"}, {"label": "US kids 10 J / EU 27", "kids": "10J", "eu": 27, "uk": "9J"}, {"label": "US kids 11 J / EU 28", "kids": "11J", "eu": 28, "uk": "10J"}, {"label": "US kids 12 J / EU 29", "kids": "12J", "eu": 29, "uk": "11J"}, {"label": "US kids 13 J / EU 30.5", "kids": "13J", "eu": 30.5, "uk": "12J"}, {"label": "US kids 1 / EU 32", "kids": "1", "eu": 32, "uk": "13J"}, {"label": "US kids 2 / EU 33", "kids": "2", "eu": 33, "uk": 1}, {"label": "US women's 4 / US kids 3 / EU 34", "usW": 4, "kids": "3", "eu": 34, "uk": 2}, {"label": "US women's 5 / US kids 4 / EU 35", "usW": 5, "kids": "4", "eu": 35, "uk": 3}, {"label": "US women's 6 / US men's 5 / EU 36.5", "usW": 6, "usM": 5, "eu": 36.5, "uk": 4}, {"label": "US women's 7 / US men's 6 / EU 38", "usW": 7, "usM": 6, "eu": 38, "uk": 5}, {"label": "US women's 8 / US men's 7 / EU 39", "usW": 8, "usM": 7, "eu": 39, "uk": 6}, {"label": "US women's 9 / US men's 8 / EU 40.5", "usW": 9, "usM": 8, "eu": 40.5, "uk": 7}, {"label": "US women's 10 / US men's 9 / EU 42", "usW": 10, "usM": 9, "eu": 42, "uk": 8}, {"label": "US women's 11 / US men's 10 / EU 43", "usW": 11, "usM": 10, "eu": 43, "uk": 9}, {"label": "US women's 12 / US men's 11 / EU 44", "usW": 12, "usM": 11, "eu": 44, "uk": 10}, {"label": "US men's 12 / EU 45", "usM": 12, "eu": 45, "uk": 11}, {"label": "US men's 13 / EU 46", "usM": 13, "eu": 46, "uk": 12}]},
+  candigrl: {"name": "Candi Grl (quad chart: Carlin, Sabina)", "kind": "Candi Grl size", "source": "https://cdn.shopify.com/s/files/1/0619/7674/0048/files/Candi-Grl-Sizing-Chart.jpg", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "insole length", "advice": "Candi Grl: \"Please note skate sizes are based on US Women's sizing\" and \"These skates fit true to women's whole shoe sizes.\" The chart gives insole length (inside the boot), not foot length, so compare it with your foot length.", "wide": "The Candi Grl chart gives no width information.", "rows": [{"label": "3 (insole 22.23 cm)", "usW": [3, 3.5], "eu": 34, "uk": [1, 1.5], "mm": 222}, {"label": "4 (insole 22.86 cm)", "usW": [4, 4.5], "eu": 35, "uk": [2, 2.5], "mm": 229}, {"label": "5 (insole 23.50 cm)", "usW": [5, 5.5], "eu": 36, "uk": [3, 3.5], "mm": 235}, {"label": "6 (insole 24.13 cm)", "usW": [6, 6.5], "eu": 37, "uk": [4, 4.5], "mm": 241}, {"label": "7 (insole 24.77 cm)", "usW": [7, 7.5], "eu": 38, "uk": [5, 5.5], "mm": 248}, {"label": "8 (insole 25.40 cm)", "usW": [8, 8.5], "eu": 39, "uk": [6, 6.5], "mm": 254}, {"label": "9 (insole 26.04 cm)", "usW": [9, 9.5], "eu": 40, "uk": [7, 7.5], "mm": 260}, {"label": "10 (insole 26.67 cm)", "usW": [10, 10.5], "eu": 41, "uk": [8, 8.5], "mm": 267}, {"label": "11 (insole 27.31 cm)", "usW": [11, 11.5], "eu": 42, "uk": [9, 9.5], "mm": 273}]},
+  bont: {"name": "Bont (Quadstar, Prostar, Parkstar chart)", "kind": "Bont size", "source": "https://bont.com/pages/bont-size-chart-parkstar-prostar", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "foot length (a range per size)", "noShoe": "Bont says its boots \"shouldn't be selected based on your everyday shoe size\": measure your foot in cm.", "advice": "Bont: \"Bont boots fit differently to regular shoes. Designed to fit like a second skin for maximum performance and control, they shouldn't be selected based on your everyday shoe size.\"", "wide": "Bont gives foot-width ranges for each size (in mm, measured at the widest part of the foot): see the width shown with your size.", "rows": [{"label": "3 (EU 35)", "eu": 35, "mm": 228, "mmMin": 225, "widths": "Standard 85-94 mm"}, {"label": "3.5 (EU 35.5)", "eu": 35.5, "mm": 232, "mmMin": 229, "widths": "Standard 86-96 mm"}, {"label": "4 (EU 36)", "eu": 36, "mm": 237, "mmMin": 233, "widths": "Standard 87-97 mm"}, {"label": "4.5 (EU 36.5)", "eu": 36.5, "mm": 241, "mmMin": 238, "widths": "Standard 89-98 mm"}, {"label": "5 (EU 37)", "eu": 37, "mm": 246, "mmMin": 242, "widths": "Standard 90-100 mm"}, {"label": "5.5 (EU 37.5)", "eu": 37.5, "mm": 250, "mmMin": 247, "widths": "Standard 91-101 mm"}, {"label": "6 (EU 38)", "eu": 38, "mm": 255, "mmMin": 251, "widths": "Standard 92-103 mm"}, {"label": "6.5 (EU 38.5)", "eu": 38.5, "mm": 259, "mmMin": 256, "widths": "Standard 94-104 mm"}, {"label": "7 (EU 39)", "eu": 39, "mm": 264, "mmMin": 260, "widths": "Standard 95-105 mm"}, {"label": "7.5 (EU 40)", "eu": 40, "mm": 268, "mmMin": 265, "widths": "Standard 96-107 mm"}, {"label": "8 (EU 41)", "eu": 41, "mm": 272, "mmMin": 269, "widths": "Standard 97-108 mm"}, {"label": "8.5 (EU 41.5)", "eu": 41.5, "mm": 277, "mmMin": 273, "widths": "Standard 97-108 mm"}, {"label": "9 (EU 42)", "eu": 42, "mm": 281, "mmMin": 278, "widths": "Standard 100-111 mm"}, {"label": "9.5 (EU 43)", "eu": 43, "mm": 286, "mmMin": 282, "widths": "Standard 101-112 mm"}, {"label": "10 (EU 44)", "eu": 44, "mm": 290, "mmMin": 287, "widths": "Standard 102-114 mm"}, {"label": "10.5 (EU 45)", "eu": 45, "mm": 295, "mmMin": 291, "widths": "Standard 104-115 mm"}, {"label": "11 (EU 46)", "eu": 46, "mm": 299, "mmMin": 296, "widths": "Standard 105-117 mm"}, {"label": "11.5 (EU 47)", "eu": 47, "mm": 304, "mmMin": 300, "widths": "Standard 106-118 mm"}, {"label": "12 (EU 48)", "eu": 48, "mm": 308, "mmMin": 305, "widths": "Standard 107-119 mm"}, {"label": "12.5 (EU 49)", "eu": 49, "mm": 313, "mmMin": 309, "widths": "Standard 109-121 mm"}, {"label": "13 (EU 50)", "eu": 50, "mm": 317, "mmMin": 314, "widths": "Standard 110-122 mm"}]},
+  bontall: {"name": "Bont (all other boots, kids sizes included)", "kind": "Bont size", "source": "https://bont.com/pages/bont-size-chart-all-other-inline-and-roller-skate-boots", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "foot length (a range per size)", "noShoe": "Bont says its boots \"shouldn't be selected based on your everyday shoe size\": measure your foot in cm.", "advice": "Bont: \"Bont boots fit differently to regular shoes. Designed to fit like a second skin for maximum performance and control, they shouldn't be selected based on your everyday shoe size.\"", "wide": "Bont gives foot-width ranges for each size (in mm, measured at the widest part of the foot): see the width shown with your size.", "rows": [{"label": "9C (EU 27)", "eu": 27, "mm": 162, "mmMin": 150, "widths": "Standard 75 mm; Wide 76-80 mm"}, {"label": "10C (EU 28)", "eu": 28, "mm": 171, "mmMin": 163, "widths": "Narrow 69 mm; Standard 70-78 mm; Wide 79-83 mm"}, {"label": "11C (EU 29)", "eu": 29, "mm": 179, "mmMin": 172, "widths": "Narrow 68-71 mm; Standard 72-80 mm; Wide 81-85 mm"}, {"label": "12C (EU 30)", "eu": 30, "mm": 188, "mmMin": 180, "widths": "Narrow 69-73 mm; Standard 74-82 mm; Wide 83-87 mm"}, {"label": "13C (EU 31)", "eu": 31, "mm": 198, "mmMin": 189, "widths": "Narrow 70-74 mm; Standard 75-84 mm; Wide 85-89 mm"}, {"label": "13.5C (EU 32)", "eu": 32, "mm": 203, "mmMin": 199, "widths": "Narrow 72-76 mm; Standard 77-86 mm; Wide 87-91 mm"}, {"label": "1 (EU 33)", "eu": 33, "mm": 207, "mmMin": 204, "widths": "Narrow 73-77 mm; Standard 78-87 mm; Wide 88-92 mm; Double wide 93-97 mm"}, {"label": "2 (EU 34)", "eu": 34, "mm": 215, "mmMin": 208, "widths": "Narrow 76-80 mm; Standard 81-90 mm; Wide 91-95 mm; Double wide 96-100 mm"}, {"label": "2.5 (EU 34.5)", "eu": 34.5, "mm": 219, "mmMin": 216, "widths": "Narrow 77-81 mm; Standard 82-91 mm; Wide 92-96 mm; Double wide 97-101 mm"}, {"label": "3 (EU 35)", "eu": 35, "mm": 224, "mmMin": 220, "widths": "Narrow 79-83 mm; Standard 84-93 mm; Wide 94-98 mm; Double wide 99-103 mm"}, {"label": "3.5 (EU 35.5)", "eu": 35.5, "mm": 228, "mmMin": 225, "widths": "Narrow 80-84 mm; Standard 85-94 mm; Wide 95-99 mm; Double wide 100-104 mm"}, {"label": "4 (EU 36)", "eu": 36, "mm": 232, "mmMin": 229, "widths": "Narrow 82-86 mm; Standard 86-96 mm; Wide 97-101 mm; Double wide 102-106 mm"}, {"label": "4.5 (EU 36.5)", "eu": 36.5, "mm": 237, "mmMin": 233, "widths": "Narrow 82-86 mm; Standard 87-97 mm; Wide 98-102 mm; Double wide 103-107 mm"}, {"label": "5 (EU 37)", "eu": 37, "mm": 241, "mmMin": 238, "widths": "Narrow 84-88 mm; Standard 89-98 mm; Wide 99-103 mm; Double wide 104-108 mm"}, {"label": "5.5 (EU 37.5)", "eu": 37.5, "mm": 246, "mmMin": 242, "widths": "Narrow 85-89 mm; Standard 90-100 mm; Wide 101-105 mm; Double wide 106-110 mm"}, {"label": "6 (EU 38)", "eu": 38, "mm": 250, "mmMin": 247, "widths": "Narrow 86-90 mm; Standard 91-101 mm; Wide 102-106 mm; Double wide 107-111 mm"}, {"label": "6.5 (EU 38.5)", "eu": 38.5, "mm": 255, "mmMin": 251, "widths": "Narrow 87-91 mm; Standard 92-103 mm; Wide 104-108 mm; Double wide 109-113 mm"}, {"label": "7 (EU 39)", "eu": 39, "mm": 259, "mmMin": 256, "widths": "Narrow 89-93 mm; Standard 94-104 mm; Wide 105-109 mm; Double wide 110-114 mm"}, {"label": "7.5 (EU 40)", "eu": 40, "mm": 264, "mmMin": 260, "widths": "Narrow 90-94 mm; Standard 95-105 mm; Wide 106-110 mm; Double wide 111-115 mm"}, {"label": "8 (EU 41)", "eu": 41, "mm": 268, "mmMin": 265, "widths": "Narrow 91-95 mm; Standard 96-107 mm; Wide 108-112 mm; Double wide 113-117 mm"}, {"label": "8.5 (EU 41.5)", "eu": 41.5, "mm": 272, "mmMin": 269, "widths": "Narrow 92-96 mm; Standard 97-108 mm; Wide 109-113 mm; Double wide 114-118 mm"}, {"label": "9 (EU 42)", "eu": 42, "mm": 277, "mmMin": 273, "widths": "Narrow 94-98 mm; Standard 99-110 mm; Wide 111-115 mm; Double wide 116-120 mm"}, {"label": "9.5 (EU 43)", "eu": 43, "mm": 281, "mmMin": 278, "widths": "Narrow 95-99 mm; Standard 100-111 mm; Wide 112-116 mm; Double wide 117-121 mm"}, {"label": "10 (EU 44)", "eu": 44, "mm": 286, "mmMin": 282, "widths": "Narrow 96-100 mm; Standard 101-112 mm; Wide 113-117 mm; Double wide 118-122 mm"}, {"label": "10.5 (EU 45)", "eu": 45, "mm": 290, "mmMin": 287, "widths": "Narrow 97-101 mm; Standard 102-114 mm; Wide 115-119 mm; Double wide 120-124 mm"}, {"label": "11 (EU 46)", "eu": 46, "mm": 295, "mmMin": 291, "widths": "Narrow 99-103 mm; Standard 104-115 mm; Wide 116-120 mm; Double wide 121-125 mm"}, {"label": "11.5 (EU 47)", "eu": 47, "mm": 299, "mmMin": 296, "widths": "Narrow 100-104 mm; Standard 105-117 mm; Wide 118-122 mm; Double wide 123-127 mm"}, {"label": "12 (EU 48)", "eu": 48, "mm": 304, "mmMin": 300, "widths": "Narrow 101-105 mm; Standard 106-118 mm; Wide 119-123 mm; Double wide 124-128 mm"}, {"label": "12.5 (EU 49)", "eu": 49, "mm": 308, "mmMin": 305, "widths": "Narrow 102-106 mm; Standard 107-119 mm; Wide 120-124 mm; Double wide 125-129 mm"}, {"label": "13 (EU 50)", "eu": 50, "mm": 313, "mmMin": 309, "widths": "Narrow 104-108 mm; Standard 109-121 mm; Wide 122-126 mm; Double wide 127-131 mm"}, {"label": "13.5 (EU 51)", "eu": 51, "mm": 317, "mmMin": 314, "widths": "Narrow 105-109 mm; Standard 110-122 mm; Wide 123-127 mm; Double wide 128-132 mm"}]},
+  crazy: {"name": "Crazy Skates (junior fixed sizes, EU 28-42)", "kind": "Crazy Skates size", "source": "https://cdn.shopify.com/s/files/1/0078/2267/1908/files/jnr-fixed-size-guide-28-42.webp", "retrieved": "2026-10-09", "noLength": "Crazy Skates says \"DO NOT Measure your Foot\" and \"Measure INSOLE from favorite Shoe\": use your shoe size, or compare a shoe insole with the chart.", "advice": "Crazy Skates: \"DO NOT Measure your Foot\" / \"Measure INSOLE from favorite Shoe\". The chart lists the insole length of each size.", "wide": "The Crazy Skates chart gives no width information.", "rows": [{"label": "EU 28 (insole 7.25 in)", "eu": 28, "kids": "10"}, {"label": "EU 29 (insole 7.5 in)", "eu": 29, "kids": "11"}, {"label": "EU 30 (insole 7.75 in)", "eu": 30, "kids": "12"}, {"label": "EU 31 (insole 8.0 in)", "eu": 31, "kids": "12"}, {"label": "EU 32 (insole 8.25 in)", "eu": 32, "usM": 1, "usW": 1}, {"label": "EU 33 (insole 8.5 in)", "eu": 33, "usM": 2, "usW": 2}, {"label": "EU 34 (insole 8.75 in)", "eu": 34, "usM": 3, "usW": 3}, {"label": "EU 35 (insole 9.0 in)", "eu": 35, "usM": 3.5, "usW": 4}, {"label": "EU 36 (insole 9.25 in)", "eu": 36, "usM": 4, "usW": 5}, {"label": "EU 37 (insole 9.5 in)", "eu": 37, "usM": 5, "usW": 6}, {"label": "EU 38 (insole 10.0 in)", "eu": 38, "usM": 6, "usW": 7}, {"label": "EU 39 (insole 10.25 in)", "eu": 39, "usM": 7, "usW": 8}, {"label": "EU 40 (insole 10.5 in)", "eu": 40, "usM": 7.5, "usW": 8.5}, {"label": "EU 41 (insole 10.75 in)", "eu": 41, "usM": 8, "usW": 9}, {"label": "EU 42 (insole 11.0 in)", "eu": 42, "usM": 9, "usW": 10}]},
+  roces: {"name": "Roces (1992, M12 UFS, FCO, PRO4 chart)", "kind": "Roces size", "source": "https://roces.com/content/size-guide/roces-size-guide.pdf (page 11)", "retrieved": "2026-10-09", "addMm": [0, 0], "lengthIs": "foot length", "advice": "Roces: \"The most important thing is to know the measure of your foot in centimetre\" and \"Considering the measure of your foot in centimetre look for the most suitable size, according also to your fitting preferences\". Chart for the 1992, M12 UFS, M12 LO TEAM UFS, FCO, PRO4, PRO '80 and SPEED RACER: Roces has a chart per model.", "wide": "The Roces chart gives no width information.", "rows": [{"label": "EU 36 / US 4", "eu": 36, "uk": 3, "usM": 4, "usW": 6, "mm": 215}, {"label": "EU 37 / US 4.5", "eu": 37, "uk": 3.5, "usM": 4.5, "usW": 6.5, "mm": 220}, {"label": "EU 38 / US 5", "eu": 38, "uk": 4, "usM": 5, "usW": 7, "mm": 225}, {"label": "EU 39 / US 6", "eu": 39, "uk": 5, "usM": 6, "usW": 8, "mm": 230}, {"label": "EU 40 / US 7", "eu": 40, "uk": 6, "usM": 7, "usW": 9, "mm": 235}, {"label": "EU 41 / US 8", "eu": 41, "uk": 7, "usM": 8, "usW": 10, "mm": 240}, {"label": "EU 42 / US 9", "eu": 42, "uk": 8, "usM": 9, "usW": 11, "mm": 245}, {"label": "EU 43 / US 10", "eu": 43, "uk": 9, "usM": 10, "usW": 12, "mm": 255}, {"label": "EU 44 / US 10.5", "eu": 44, "uk": 9.5, "usM": 10.5, "mm": 260}, {"label": "EU 45 / US 11", "eu": 45, "uk": 10, "usM": 11, "mm": 270}, {"label": "EU 46 / US 12", "eu": 46, "uk": 11, "usM": 12, "mm": 275}, {"label": "EU 47 / US 13", "eu": 47, "uk": 12, "usM": 13, "mm": 285}, {"label": "EU 48 / US 14", "eu": 48, "uk": 13, "usM": 14, "mm": 290}, {"label": "EU 49 / US 15", "eu": 49, "uk": 14, "usM": 15, "mm": 295}]}
+};
+function label(b, r){ return b.sizeLabel ? b.sizeLabel(r) : b.kind + ' ' + r.label; }
+// Does chart cell c hold shoe size v? Numbers, [low, high] ranges and kids labels ("7J" = kids 7).
+function cellHas(c, v, kids){
+  if(c == null) return false;
+  if(Array.isArray(c)) return v >= c[0] && v <= c[1];
+  if(kids) return String(c).replace(/\s|j|J|Y/g, '') === String(v);
+  return String(c) === String(v);
+}
+function cellNum(c){ return Array.isArray(c) ? c[0] : Number(c); }
+function recommend(brandKey, system, value, wide){
+  const b = BRANDS[brandKey]; if(!b) return {error:'Unknown brand'};
+  const v = Number(String(value).replace(',','.').replace(/\s|j|J|Y/g, ''));
+  const notes = [];
+  if(!(v>0)) return {error:'Enter a valid number'};
+  let row, comfortRow = null;
+  if(system === 'cm'){
+    if(b.noLength) return {error: b.noLength};
+    const rows = b.rows.filter(r => r.mm != null), max = rows[rows.length-1].mm, min = rows[0].mmMin || rows[0].mm;
+    const foot = v*10;
+    if(foot < 100 || foot > 400) return {error:'Foot length looks wrong: enter centimetres, e.g. 25.5'};
+    const pick = add => rows.find(r => r.mm >= foot + add);
+    row = pick(b.addMm[1]);
+    if(b.addMm[1] > b.addMm[0]) comfortRow = pick(b.addMm[0]);
+    if(!row) return {error:'Your foot is longer than the largest size on this chart (' + max/10 + ' cm).'};
+    if(foot + b.addMm[1] < min) notes.push('Your foot is shorter than the smallest size on this chart; smallest size shown.');
+    if(comfortRow && comfortRow !== row) notes.push('With the brand\'s smaller margin (+' + b.addMm[0] + ' mm): ' + label(b, comfortRow) + '.');
+    if(b.lengthIs === 'insole length') notes.push('This chart gives the insole length of each size, not a foot length.');
+    const also = rows.filter(r => r !== row && r.mmMin != null && foot >= r.mmMin && foot <= r.mm);
+    if(also.length) notes.push('Your foot also fits the range of: ' + also.map(r => label(b, r)).join(', ') + '.');
+  } else {
+    if(b.noShoe) return {error: b.noShoe};
+    const kids = system === 'kids';
+    const col = b.rows.filter(r => r[system] != null);
+    if(!col.length) return {error: kids ? 'This brand\'s chart has no US kids\' sizes: measure the foot in cm instead.' : 'This brand\'s chart has no ' + system + ' column.'};
+    row = col.find(r => cellHas(r[system], v, kids));
+    if(!row){
+      if(kids) return {error:'That kids\' size is not on this chart. Measure the foot in cm instead.'};
+      if(b.halfRule === 'up'){ row = col.find(r => cellNum(r[system]) > v); if(row) notes.push('No exact match: rounded up to the next full size, as the brand advises.'); }
+      else { row = col.slice().sort((a,c) => Math.abs(cellNum(a[system])-v) - Math.abs(cellNum(c[system])-v))[0]; notes.push('No exact match on the chart: closest size shown. Measure your foot to be sure.'); }
+    }
+    if(!row) return {error:'That size is outside this brand\'s chart.'};
+    notes.push('Shoe size to skate size is approximate. A foot measurement in mm is more reliable.');
+  }
+  if(row.widths) notes.push('Widths for this size: ' + row.widths + '.');
+  const warnings = [];
+  if(wide) warnings.push('Wide feet: ' + b.wide + ' Check width as well as length.');
+  return {size: label(b, row), row, comfort: comfortRow ? label(b, comfortRow) : null, advice: b.advice, notes, warnings, source: b.source, retrieved: b.retrieved};
+}
+// Guide page for the result: a kids' chart or a kids' shoe size -> kids guide; wide feet -> wide-feet guide;
+// otherwise -> adult beginner guide. The size is not passed in the address: no guide page can show it.
+// Inline brands go to the inline guides: the wide-feet guide names quads only (fix of 23/11/2026).
+var INLINE_BRANDS = ['rollerblade','rollerbladew','bladerunner','powerslide','k2'];
+function destination(wide, brandKey, system){
+  if(system === 'kids' || /kids$/.test(brandKey || '')) return 'best-roller-skates-for-kids';
+  if(INLINE_BRANDS.indexOf(brandKey) >= 0) return 'first-fitness-inline-skates';
+  if(brandKey === 'roces') return 'first-aggressive-skates';
+  return wide ? 'best-skates-for-wide-feet' : 'best-roller-skates-for-adult-beginners';
+}
+/*BASED_START*/
+// Ecrit par build_embeds.py (dictionnaire BASED) : ne pas modifier a la main.
+var BASED = {
+  'best-roller-skates-for-adult-beginners': [18, 'skaters, coaches and gear specialists'],
+  'quad-vs-inline-skates-which-to-buy-first': [23, 'skaters, coaches and skate-industry figures'],
+  'best-skates-for-wide-feet': [7, 'skaters and coaches'],
+  'best-roller-skates-under-100': [12, 'skaters, coaches and specialist shops'],
+  'outdoor-wheels-what-to-buy': [19, 'skaters, coaches and industry figures'],
+  'rink-wheels-what-to-buy': [9, 'skaters and coaches'],
+  'protective-gear-that-actually-fits': [24, 'skaters and coaches'],
+  'first-roller-derby-skates': [15, 'skaters, 11 of them roller derby players,'],
+  'first-quad-skates-for-rink-and-jam': [19, 'rink, jam, rhythm and dance skaters and coaches'],
+  'first-quad-skates-for-skatepark': [6, 'park skaters, coaches and brand founders'],
+  'outdoor-quad-skates': [5, 'skaters and coaches'],
+  'first-fitness-inline-skates': [17, 'skaters, coaches and gear specialists'],
+  'first-aggressive-skates': [18, 'aggressive bladers'],
+  'skate-helmets-what-top-skaters-wear': [20, 'skaters and coaches'],
+  'best-roller-skates-for-kids': [3, 'named coaches and skate schools']
+};
+function basedLine(slug, href){
+  var b = BASED[slug]; if(!b) return '';
+  return '<p class="note" style="color:#F7EEE5;margin-top:10px">Based on what ' + b[0] + ' ' + b[1] + ' recommend in our compilation of top skaters. ' +
+    '<a style="color:#F0CD96" href="' + href + '">See the compilation</a></p>';
+}
+/*BASED_END*/
+/*DATA_END*/
+
+var $ = function(id){ return document.getElementById(id); };
+Object.keys(BRANDS).forEach(function(k){ var o = document.createElement('option'); o.value = k; o.textContent = BRANDS[k].name; $('brand').appendChild(o); });
+$('sys').addEventListener('change', function(){ $('val').placeholder = $('sys').value === 'cm' ? 'e.g. 25.5' : 'e.g. 8'; });
+// Destination : destination(), dans le bloc DATA de la page complete (taille enfant -> guide enfants ;
+// marque en ligne -> guide fitness en ligne ; Roces -> guide agressif ;
+// pieds larges -> guide pieds larges ; sinon -> guide adulte debutant).
+$('go').addEventListener('click', function(){
+  var wide = $('wide').checked;
+  var r = recommend($('brand').value, $('sys').value, $('val').value, wide);
+  if(r.error){ showOut('<div class="warn">' + esc(r.error) + '</div>'); return; }
+  var dest = destination(wide, $('brand').value, $('sys').value);
+  showOut('<div class="res"><div class="big">' + esc(r.size) + '</div>' +
+    cta('See skates in your size &rarr;', '/guide/' + dest + '/') + basedLine(dest, ourUrl('/guide/')) +
+    '<p>' + esc(r.advice) + '</p>' + r.notes.map(function(n){ return '<p class="note" style="color:#F7EEE5">' + esc(n) + '</p>'; }).join('') +
+    '<p class="note" style="color:#F7EEE5">Source: ' + esc(host(r.source)) + ' size chart (retrieved ' + esc(r.retrieved) + ').</p></div>' +
+    r.warnings.map(function(w){ return '<div class="warn">' + esc(w) + '</div>'; }).join(''));
+});
+
+</script>
+</body>
+</html>

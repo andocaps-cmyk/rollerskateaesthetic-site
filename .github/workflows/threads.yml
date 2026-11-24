@@ -1,0 +1,141 @@
+# niveau : script — publication sans modele, zero jeton de modele ; pas de niveau au-dessus necessaire.
+name: Publication Threads
+
+# Publie sur Threads, par l'API officielle, une page du site par jour (publier_threads.py), puis releve les
+# chiffres du compte (releve_threads.py). Ecrit le 26/10/2026 (un document interne).
+# Source : sitemap.xml, jamais feed.xml (pause Pinterest). Registre : _releves/publies_threads.tsv.
+# 07/11/2026 (un document interne, decision du propriétaire du 02/11/2026 a 3 h 50) :
+# UN seul passage programme par jour, precede d'une attente au hasard de 0 a 25 min. La garde du script fixe
+# le plafond PERMANENT de 1 publication par jour (PLAFOND_JOUR) et l'ecart minimal de 2 heures ;
+# _releves/alerte_threads.txt ne sert plus qu'aux vraies alertes. Plus de palier 3 puis 5.
+# Horaire : GitHub lance les passages programmes de ce depot 5 a 8 h en retard (constate du 04 au 06/11 :
+# le cron de 10:20 UTC partait vers 17:30 UTC). 10:20 UTC laisse donc la publication dans la journee UTC,
+# en fin d'apres-midi a Paris et vers midi sur la cote est des Etats-Unis.
+on:
+  schedule:
+    - cron: "20 10 * * 1,4"
+    - cron: "31 10 * * 2,5"
+    - cron: "39 10 * * 0,3,6"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true = affiche sans publier"
+        default: "true"
+  # Declencheur de secours, comme bluesky.yml : le jeton d'API du projet ne peut pas lancer workflow_dispatch (403).
+  # Modifier _releves/declencheur_threads.txt (ligne dry_run=true|false) lance ce workflow ; sans valeur lisible : dry_run=true.
+  push:
+    branches: [main]
+    paths: ["_releves/declencheur_threads.txt"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: threads
+  cancel-in-progress: false
+
+jobs:
+  threads:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Mode
+        env:
+          EVENT: ${{ github.event_name }}
+          IN_DRY: ${{ github.event.inputs.dry_run }}
+          HAS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN != '' }}
+        run: |
+          DRY_RUN=true
+          if [ "$EVENT" = "schedule" ]; then DRY_RUN=false; fi
+          if [ "$EVENT" = "workflow_dispatch" ]; then DRY_RUN="${IN_DRY:-true}"; fi
+          if [ "$EVENT" = "push" ]; then
+            v=$(sed -n 's/^dry_run=//p' _releves/declencheur_threads.txt | head -1 | tr -d '\r '); [ -n "$v" ] && DRY_RUN="$v"
+          fi
+          if [ "$HAS_TOKEN" != "true" ] && [ "$DRY_RUN" = "false" ]; then
+            # tant que le compte n'est pas relie, la chaine tourne a blanc (textes affiches) au lieu de rougir chaque jour
+            echo "::warning::Secret THREADS_ACCESS_TOKEN absent : compte Threads du projet pas encore relie (voir la documentation du projet). Passage a blanc."
+            DRY_RUN=true
+          fi
+          echo "Mode: dry_run=$DRY_RUN (evenement $EVENT)"
+          echo "DRY_RUN=$DRY_RUN" >> "$GITHUB_ENV"
+
+      # 20/11/2026 : cadence de GTA en roller (un document interne § 4) : on renouvelle des qu'il reste moins de
+      # 53 jours (60 - 7), au lieu de moins de 20 (une seule fenetre). Un echec rend la chaine rouge en derniere etape,
+      # sans empecher la publication.
+      # Le jeton long vit 60 jours. On le renouvelle quand il reste moins de 53 jours (ou date inconnue),
+      # et on reecrit le secret si la chaine du jeton a change. Un echec ici ne bloque pas la publication.
+      # Une seule fois par jour (date du jour dans l'en-tete), meme si un passage manuel s'ajoute au programme.
+      - name: Renouveler le jeton si besoin
+        id: renouveler
+        if: env.DRY_RUN == 'false'
+        continue-on-error: true
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          SECRETS_PAT: ${{ secrets.ROLLER_SECRETS_PAT }}
+          REPO: ${{ github.repository }}
+        run: |
+          if grep -q "renouvele le $(date -u +%F)" _releves/jeton_threads_expire.txt 2>/dev/null; then
+            echo "Jeton deja renouvele aujourd'hui : pas de second renouvellement."; exit 0
+          fi
+          fin=$(grep -v '^#' _releves/jeton_threads_expire.txt 2>/dev/null | head -1 | tr -d '\r ')
+          if [ -n "$fin" ] && [ $(( ( $(date -d "$fin" +%s) - $(date +%s) ) / 86400 )) -ge 53 ]; then
+            echo "Jeton valable jusqu'au $fin : pas de renouvellement."; exit 0
+          fi
+          python3 publier_threads.py --rafraichir-jeton "$RUNNER_TEMP/jeton"
+          if cmp -s <(printf %s "$THREADS_ACCESS_TOKEN") "$RUNNER_TEMP/jeton"; then echo "Meme jeton : secret inchange."; exit 0; fi
+          if [ -z "$SECRETS_PAT" ]; then echo "::error::Jeton neuf mais ROLLER_SECRETS_PAT absent : secret non reecrit."; exit 1; fi
+          pip install -q pynacl
+          python3 - <<'EOF'
+          import base64, json, os, urllib.request
+          from nacl import encoding, public
+          repo, pat = os.environ["REPO"], os.environ["SECRETS_PAT"]
+          h = {"Authorization": "Bearer " + pat, "Accept": "application/vnd.github+json"}
+          cle = json.load(urllib.request.urlopen(urllib.request.Request(
+              "https://api.github.com/repos/%s/actions/secrets/public-key" % repo, headers=h)))
+          boite = public.SealedBox(public.PublicKey(cle["key"].encode(), encoding.Base64Encoder()))
+          chiffre = base64.b64encode(boite.encrypt(open(os.environ["RUNNER_TEMP"] + "/jeton").read().encode())).decode()
+          corps = json.dumps({"encrypted_value": chiffre, "key_id": cle["key_id"]}).encode()
+          urllib.request.urlopen(urllib.request.Request(
+              "https://api.github.com/repos/%s/actions/secrets/THREADS_ACCESS_TOKEN" % repo,
+              data=corps, headers=h, method="PUT"))
+          print("Secret THREADS_ACCESS_TOKEN reecrit.")
+          EOF
+          rm -f "$RUNNER_TEMP/jeton"
+
+      - name: Publier
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then python3 publier_threads.py --dry-run --max-posts 2
+          elif [ "$GITHUB_EVENT_NAME" = "schedule" ]; then python3 publier_threads.py --max-posts 1 --attente-max 240
+          else python3 publier_threads.py --max-posts 1; fi
+
+      - name: Relever les chiffres
+        if: always() && env.DRY_RUN == 'false'
+        continue-on-error: true
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+        run: python3 releve_threads.py
+
+      - name: Pousser le registre
+        if: always() && env.DRY_RUN == 'false'
+        run: |
+          git config user.name "threads-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add $(ls _releves/publies_threads.tsv _releves/echecs_threads.tsv _releves/jeton_threads_expire.txt _releves/alerte_threads.txt _releves/suspension_threads.json \
+                       _releves/releve_threads.csv _releves/releve_threads_publications.csv 2>/dev/null)
+          if git diff --cached --quiet; then echo "Registre inchange."; exit 0; fi
+          git commit -m "Registre Threads du $(date -u +%F)"
+          git pull --rebase origin main && git push || { git pull --rebase origin main && git push; }
+
+      - name: Rendre la chaine rouge si le renouvellement du jeton a echoue
+        if: always() && steps.renouveler.outcome == 'failure'
+        run: |
+          echo "::error::Renouvellement du jeton Threads en echec ; fin connue : $(grep -v '^#' _releves/jeton_threads_expire.txt | head -1)"
+          exit 1

@@ -1,0 +1,4 @@
+restantes=0
+date_etat=02/10/2026
+pousse_le=24/10/2026 01h01 UTC
+source=etat local, par pousser_restantes.py (tache locale)

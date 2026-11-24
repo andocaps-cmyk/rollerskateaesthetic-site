@@ -1,0 +1,40 @@
+{
+ "cle": "instagram",
+ "historique": [
+  {
+   "le": "2026-11-08T18:53:39Z",
+   "quoi": "premier refus observe (echecs_instagram.tsv), avant la garde"
+  },
+  {
+   "le": "2026-11-10T01:52:11Z",
+   "quoi": "refus 1",
+   "motif": "skate/dont-push-hard-on-wet-ground : Meta 4/2207051 : publication suspectee de spam, « action is blocked » (page officielle des erreurs). Etat amorce le 10/11/2026 par le chef a partir de _releves/echecs_instagram.tsv : 4 refus identiques (08/11 18:53:39, 09/11 19:19:37, 09/11 23:32:09, 10/11 01:52:"
+  },
+  {
+   "le": "2026-11-13T16:54:42Z",
+   "quoi": "essai"
+  },
+  {
+   "le": "2026-11-13T16:55:09Z",
+   "quoi": "refus 2",
+   "motif": "skate/dont-push-hard-on-wet-ground : Meta 4/2207051 : publication suspectee de spam, « action is blocked » (page officielle des erreurs)"
+  },
+  {
+   "le": "2026-11-19T17:57:03Z",
+   "quoi": "essai"
+  },
+  {
+   "le": "2026-11-19T17:57:25Z",
+   "quoi": "refus 3",
+   "motif": "skate/dont-push-hard-on-wet-ground : Meta 4/2207051 : publication suspectee de spam, « action is blocked » (page officielle des erreurs)"
+  }
+ ],
+ "depuis": "2026-11-08T18:53:39Z",
+ "actif": true,
+ "refus": 3,
+ "dernier_refus": "2026-11-19T17:57:25Z",
+ "motif": "skate/dont-push-hard-on-wet-ground : Meta 4/2207051 : publication suspectee de spam, « action is blocked » (page officielle des erreurs)",
+ "prochain_essai": "2026-12-01T17:57:25Z",
+ "delai_h": 288,
+ "regle": "aucun appel avant prochain_essai ; puis un seul essai ; levee : python suspension.py lever <fichier>"
+}

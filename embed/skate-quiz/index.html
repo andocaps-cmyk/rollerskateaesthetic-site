@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Which Skates Are Right for Me? (embed) | Roller Skate Aesthetic</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://rollerskateaesthetic.com/tools/skate-quiz/">
+<base target="_blank">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F7EEE5;--cream-deep:#EEE0D4;--ink:#2C2230;--coral:#E88A74;--lilac:#B7A2C4;--sage:#98AA96;--butter:#F0CD96}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Jost,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:18px;line-height:1.65}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 48px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;letter-spacing:-.01em}
+h1{font-size:clamp(2rem,7vw,3rem);font-weight:900;margin:.8em 0 .3em}
+h2{font-size:clamp(1.4rem,4.5vw,1.9rem);font-weight:900;margin:2em 0 .5em}
+.answer{background:var(--cream-deep);border-left:5px solid var(--coral);padding:14px 18px;margin:1em 0}
+.tool{background:#fff;border:2px solid var(--ink);padding:18px;margin:1.5em 0;border-radius:2px}
+fieldset{border:0;padding:0;margin:0 0 1em}
+legend{font-weight:600;margin:.6em 0 .35em;padding:0}
+.opt{display:flex;align-items:center;gap:10px;border:2px solid var(--ink);background:var(--cream);padding:10px 12px;margin:6px 0;border-radius:2px;cursor:pointer}
+.opt input{width:auto;margin:0}
+.step-count{font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;opacity:.75}
+button{margin-top:1.1em;width:100%;font:inherit;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.9rem;background:var(--ink);color:var(--cream);border:0;padding:14px;border-radius:2px;cursor:pointer}
+button:hover{background:var(--coral);color:var(--ink)}
+button.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+#out{margin-top:1.2em}
+.res{background:var(--ink);color:var(--cream);padding:18px;border-radius:2px}
+.res .big{font-family:Fraunces,Georgia,serif;font-weight:900;font-size:1.5rem}
+.res a{color:var(--coral)}
+.warn{background:var(--butter);padding:12px 16px;margin-top:12px;border-left:5px solid var(--coral);color:var(--ink)}
+.note{font-size:.9rem;opacity:.8}
+.hidden{display:none}
+ul.links li{margin:.35em 0}
+a{color:var(--ink)}
+/*site header and footer*/
+header.top{background:#EEE0D4;border-bottom:3px solid #2C2230;padding:20px 0}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:0 16px}
+header.top a{color:#2C2230;text-decoration-color:#E88A74;text-underline-offset:3px;text-decoration-thickness:2px}
+.brand{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:1rem;text-decoration:none;letter-spacing:-.01em}
+footer{border-top:3px solid #2C2230;background:#EEE0D4;padding:28px 0;margin-top:52px;font-size:.9rem;opacity:.8}
+footer .wrap{padding:0 16px}
+footer p{margin:0 0 .4em}
+footer a{color:#2C2230}
+a.cta,.res a.cta{display:block;text-align:center;margin:14px 0 10px;background:#E88A74;color:#2C2230;font-weight:600;font-size:1rem;line-height:1.3;text-decoration:none;padding:14px 16px;border-radius:4px;border:2px solid #F7EEE5;overflow-wrap:normal;word-break:normal}
+a.cta:hover,.res a.cta:hover{background:#F0CD96}
+/*byline*/.byline{font-size:.9rem;opacity:.65;margin:-.4rem 0 1.4rem;letter-spacing:.02em}
+
+body{background:#F7EEE5}
+.embed{max-width:700px;margin:0 auto;padding:10px}
+.embed .tool{margin:0}
+a.cta{display:block;text-align:center;margin:14px 0 10px;background:#E88A74;color:#2C2230;font-weight:600;font-size:1rem;line-height:1.3;text-decoration:none;padding:14px 16px;border-radius:4px;border:2px solid #F7EEE5}
+a.cta:hover{background:#F0CD96}
+.credit{text-align:center;font-size:.85rem;margin:10px 0 4px}
+.credit a{color:#2C2230;text-decoration-color:#E88A74;text-underline-offset:3px}
+.res ul a{color:#F0CD96}
+#shared-by{font-weight:600;margin-bottom:0}
+</style>
+</head>
+<body>
+<!-- Version integrable, ecrite par build_embeds.py a partir de tools/skate-quiz/index.html : ne pas modifier a la main. -->
+<main class="embed">
+<div class="tool" id="tool">
+<noscript><p class="warn">The quiz needs JavaScript. All the buying guides: <a href="https://rollerskateaesthetic.com/guide/?utm_source=embed&utm_medium=tool&utm_campaign=skate-quiz&via=quiz" target="_blank" rel="noopener">rollerskateaesthetic.com/guide</a></p></noscript>
+<form id="quiz" class="hidden">
+<p class="step-count" id="count"></p>
+
+<fieldset data-q="need"><legend>What are you shopping for?</legend>
+<label class="opt"><input type="radio" name="need" value="skates">A pair of skates</label>
+<label class="opt"><input type="radio" name="need" value="wheels">New wheels for skates I already have</label>
+<label class="opt"><input type="radio" name="need" value="gear">Pads, wrist guards or a helmet</label>
+</fieldset>
+
+<fieldset data-q="discipline"><legend>What kind of skating will you do most?</legend>
+<label class="opt"><input type="radio" name="discipline" value="derby">Roller derby</label>
+<label class="opt"><input type="radio" name="discipline" value="rink">Rink, jam or dance skating, indoors</label>
+<label class="opt"><input type="radio" name="discipline" value="outdoor">Outside: paths, streets, parks</label>
+<label class="opt"><input type="radio" name="discipline" value="park">Skatepark: ramps and bowls</label>
+<label class="opt"><input type="radio" name="discipline" value="mix">A bit of everything / not sure yet</label>
+</fieldset>
+
+<fieldset data-q="type"><legend>Quad or inline?</legend>
+<label class="opt"><input type="radio" name="type" value="quad">Quad (two wheels at the front, two at the back)</label>
+<label class="opt"><input type="radio" name="type" value="inline">Inline (wheels in one line)</label>
+<label class="opt"><input type="radio" name="type" value="unsure">I don't know yet</label>
+</fieldset>
+
+<fieldset data-q="wide"><legend>Are your feet wide?</legend>
+<label class="opt"><input type="radio" name="wide" value="yes">Yes, most shoes feel tight across the front</label>
+<label class="opt"><input type="radio" name="wide" value="no">No / not that I know of</label>
+</fieldset>
+
+<fieldset data-q="budget"><legend>What is your budget for the skates?</legend>
+<label class="opt"><input type="radio" name="budget" value="under100">Under $100</label>
+<label class="opt"><input type="radio" name="budget" value="over100">$100 or more</label>
+</fieldset>
+
+<button id="next" type="button">Next</button>
+<button id="back" type="button" class="ghost">Back</button>
+</form>
+<div id="out" aria-live="polite"></div>
+</div>
+<p class="credit" id="shared-by" hidden></p>
+<p class="credit"><a href="https://rollerskateaesthetic.com/tools/skate-quiz/?utm_source=embed&utm_medium=tool&utm_campaign=skate-quiz" target="_blank" rel="noopener">Free tool by Roller Skate Aesthetic</a></p>
+</main>
+<script>
+
+var SITE = 'https://rollerskateaesthetic.com', TOOL = 'skate-quiz', VIA = 'quiz';
+// 25/10/2026 : `via` = identifiant de suivi de l'outil, lu par le script via-tag des pages /guide/ (attribution outil -> achat Amazon).
+function ourUrl(path){ return SITE + path + '?utm_source=embed&utm_medium=tool&utm_campaign=' + TOOL + (path.indexOf('/guide/') === 0 ? '&via=' + VIA : ''); }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function host(u){ try { return new URL(u).hostname.replace(/^www\./, ''); } catch(e){ return ''; } }
+function cta(text, path){ return '<a class="cta" href="' + ourUrl(path) + '" target="_blank" rel="noopener">' + text + '</a>'; }
+// Fait defiler le document DU CADRE jusqu'a la reponse (jamais la page du club).
+function showOut(html){ var o = document.getElementById('out'); o.innerHTML = html; window.scrollTo({top: Math.max(0, o.getBoundingClientRect().top + window.pageYOffset - 8), behavior: 'smooth'}); }
+// Parametres du club : ?club=<nom> et ?accent=<RRGGBB>. Le nom est pose en textContent (jamais en HTML) ;
+// la couleur n'est retenue que si elle fait exactement 6 chiffres hexadecimaux.
+(function(){
+  var p; try { p = new URLSearchParams(window.location.search); } catch(e){ return; }
+  var club = (p.get('club') || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+  if (club) { var s = document.getElementById('shared-by'); s.textContent = 'Shared by ' + club; s.hidden = false; }
+  var a = p.get('accent') || '';
+  if (/^[0-9a-fA-F]{6}$/.test(a)) {
+    var r = parseInt(a.slice(0,2),16), g = parseInt(a.slice(2,4),16), b = parseInt(a.slice(4,6),16);
+    var fg = (0.299*r + 0.587*g + 0.114*b) > 150 ? '#2C2230' : '#F7EEE5';
+    var st = document.createElement('style');
+    st.textContent = 'button:not(.ghost),button:not(.ghost):hover,a.cta,a.cta:hover,.res a.cta,.res a.cta:hover{background:#' + a + ';color:' + fg + '}button:not(.ghost):hover,a.cta:hover,.res a.cta:hover{filter:brightness(1.08)}';
+    document.head.appendChild(st);
+  }
+})();
+
+/*DATA_START*/
+const PAGES = {
+  'best-roller-skates-for-adult-beginners': 'Best roller skates for adult beginners',
+  'quad-vs-inline-skates-which-to-buy-first': 'Quad vs inline skates: which to buy first',
+  'best-skates-for-wide-feet': 'Best skates for wide feet',
+  'best-roller-skates-under-100': 'Best roller skates under $100',
+  'outdoor-wheels-what-to-buy': 'Outdoor wheels: what to buy',
+  'rink-wheels-what-to-buy': 'Rink wheels: what to buy',
+  'protective-gear-that-actually-fits': 'Protective gear that actually fits',
+  'first-roller-derby-skates': 'Your first roller derby skates',
+  'first-quad-skates-for-rink-and-jam': 'Your first quad skates for the rink, jam and dance',
+  'outdoor-quad-skates': 'Outdoor quad skates',
+  'first-quad-skates-for-skatepark': 'Your first quad skates for the skatepark',
+  'first-fitness-inline-skates': 'Your first fitness and distance inline skates',
+  'first-aggressive-skates': 'Your first aggressive inline skates'
+};
+const TIPS = {
+  'are-inline-skates-or-quad-skates-easier-for-beginners': 'Are inline skates or quad skates easier for beginners?',
+  'how-to-size-roller-skates': 'How to size roller skates',
+  'why-skates-hurt': 'Why skates hurt',
+  'what-gear-do-you-need-to-start-roller-skating': 'What gear do you need to start roller skating?',
+  'outdoor-vs-indoor-wheels': 'Outdoor vs indoor wheels',
+  'when-to-replace-wheels': 'When to replace your wheels',
+  'skate-bearings-explained': 'Skate bearings explained',
+  'protective-gear-checklist': 'Protective gear checklist',
+  'how-to-fall-safely': 'How to fall safely',
+  'socks-that-cover-the-cuff': 'Socks that cover the cuff',
+  'new-gear-is-not-a-shortcut': 'New gear is not a shortcut',
+  'quads-were-built-for-the-rink-floor-outside-is-harder-not-impossible': 'Quads were built for the rink floor: outside is harder, not impossible',
+  'skate-rink-etiquette': 'Skate rink etiquette'
+};
+const QUESTIONS = {
+  need: ['skates','wheels','gear'],
+  discipline: ['derby','rink','outdoor','park','mix'],
+  type: ['quad','inline','unsure'],
+  wide: ['yes','no'],
+  budget: ['under100','over100']
+};
+// Which questions are asked, given the answers so far (max 5).
+// Discipline question added 09/10/2026. Derby skips "quad or inline": our derby guide is a quad guide.
+// The budget question only changes the answer for "a bit of everything", so it is asked only there.
+function questionsFor(a){
+  if(a.need === 'wheels' || a.need === 'gear') return ['need','discipline'];
+  const q = ['need','discipline'];
+  if(a.discipline !== 'derby') q.push('type');
+  if(a.type === 'unsure') return q; // "not sure yet" always leads to the quad vs inline guide
+  q.push('wide');
+  if(!a.discipline || a.discipline === 'mix') q.push('budget');
+  return q;
+}
+// Where the skater will mostly be, for the tips: derby and rink are indoors.
+function terrainOf(a){ return {derby:'rink', rink:'rink', outdoor:'outdoor', park:'outdoor', mix:'both'}[a.discipline] || 'both'; }
+// Routing: returns {page, tips[]} for a full set of answers. Every page is an existing /guide/ page.
+function route(a){
+  let page, tips = [];
+  const terrain = terrainOf(a);
+  if(a.need === 'wheels'){
+    // Derby and rink -> rink wheels (the page covers the derby players' indoor wheels); park -> the skatepark
+    // guide, which lists park wheels; outdoor and "a bit of everything" -> outdoor wheels.
+    page = {derby:'rink-wheels-what-to-buy', rink:'rink-wheels-what-to-buy', park:'first-quad-skates-for-skatepark'}[a.discipline] || 'outdoor-wheels-what-to-buy';
+    tips = ['outdoor-vs-indoor-wheels','when-to-replace-wheels','skate-bearings-explained'];
+  }
+  else if(a.need === 'gear'){
+    // Derby -> the derby guide, the one page that lists a mouthguard with the pads and helmet.
+    page = a.discipline === 'derby' ? 'first-roller-derby-skates' : 'protective-gear-that-actually-fits';
+    tips = ['protective-gear-checklist','how-to-fall-safely'];
+  }
+  else {
+    const quad = a.discipline === 'derby' || a.type === 'quad';
+    if(a.type === 'unsure' && a.discipline !== 'derby'){ page = 'quad-vs-inline-skates-which-to-buy-first'; tips.push('are-inline-skates-or-quad-skates-easier-for-beginners'); }
+    else if(a.discipline === 'derby'){ page = 'first-roller-derby-skates'; tips.push('how-to-size-roller-skates','what-gear-do-you-need-to-start-roller-skating'); }
+    // Wide feet -> the wide-feet guide only for quads skated outside or "a bit of everything": that guide names outdoor quads.
+    // Derby, rink and park keep their own guide: boot cut and wheel hardness depend on the discipline (league feedback, 13/11/2026).
+    else if(a.wide === 'yes' && quad && (a.discipline === 'outdoor' || a.discipline === 'mix')){ page = 'best-skates-for-wide-feet'; tips.push('how-to-size-roller-skates','why-skates-hurt','socks-that-cover-the-cuff'); }
+    else if(a.discipline === 'rink'){ page = quad ? 'first-quad-skates-for-rink-and-jam' : 'best-roller-skates-for-adult-beginners'; tips.push('how-to-size-roller-skates','what-gear-do-you-need-to-start-roller-skating'); }
+    else if(a.discipline === 'outdoor'){ page = quad ? 'outdoor-quad-skates' : 'first-fitness-inline-skates'; tips.push('how-to-size-roller-skates','what-gear-do-you-need-to-start-roller-skating'); }
+    else if(a.discipline === 'park'){ page = quad ? 'first-quad-skates-for-skatepark' : 'first-aggressive-skates'; tips.push('how-to-size-roller-skates','what-gear-do-you-need-to-start-roller-skating'); }
+    else if(a.budget === 'under100'){ page = 'best-roller-skates-under-100'; tips.push('why-skates-hurt','how-to-size-roller-skates','new-gear-is-not-a-shortcut'); }
+    else { page = 'best-roller-skates-for-adult-beginners'; tips.push('how-to-size-roller-skates','what-gear-do-you-need-to-start-roller-skating'); }
+    if(quad && terrain !== 'rink') tips.push('quads-were-built-for-the-rink-floor-outside-is-harder-not-impossible');
+    if(terrain === 'rink') tips.push('skate-rink-etiquette');
+  }
+  if(a.need === 'skates' && a.wide === 'yes') tips.push('why-skates-hurt');
+  if(terrain === 'outdoor' && a.need === 'gear') tips.push('outdoor-vs-indoor-wheels');
+  tips = tips.filter((t,i) => tips.indexOf(t) === i);
+  return {page, tips};
+}
+// Text of the button under the answer.
+function ctaText(a){ return a.need === 'wheels' ? 'See the wheels that match your answers &rarr;' : (a.need === 'gear' ? 'See the gear that matches your answers &rarr;' : 'See the skates that match your answers &rarr;'); }
+/*BASED_START*/
+// Ecrit par build_embeds.py (dictionnaire BASED) : ne pas modifier a la main.
+var BASED = {
+  'best-roller-skates-for-adult-beginners': [18, 'skaters, coaches and gear specialists'],
+  'quad-vs-inline-skates-which-to-buy-first': [23, 'skaters, coaches and skate-industry figures'],
+  'best-skates-for-wide-feet': [7, 'skaters and coaches'],
+  'best-roller-skates-under-100': [12, 'skaters, coaches and specialist shops'],
+  'outdoor-wheels-what-to-buy': [19, 'skaters, coaches and industry figures'],
+  'rink-wheels-what-to-buy': [9, 'skaters and coaches'],
+  'protective-gear-that-actually-fits': [24, 'skaters and coaches'],
+  'first-roller-derby-skates': [15, 'skaters, 11 of them roller derby players,'],
+  'first-quad-skates-for-rink-and-jam': [19, 'rink, jam, rhythm and dance skaters and coaches'],
+  'first-quad-skates-for-skatepark': [6, 'park skaters, coaches and brand founders'],
+  'outdoor-quad-skates': [5, 'skaters and coaches'],
+  'first-fitness-inline-skates': [17, 'skaters, coaches and gear specialists'],
+  'first-aggressive-skates': [18, 'aggressive bladers'],
+  'skate-helmets-what-top-skaters-wear': [20, 'skaters and coaches'],
+  'best-roller-skates-for-kids': [3, 'named coaches and skate schools']
+};
+function basedLine(slug, href){
+  var b = BASED[slug]; if(!b) return '';
+  return '<p class="note" style="color:#F7EEE5;margin-top:10px">Based on what ' + b[0] + ' ' + b[1] + ' recommend in our compilation of top skaters. ' +
+    '<a style="color:#F0CD96" href="' + href + '">See the compilation</a></p>';
+}
+/*BASED_END*/
+/*DATA_END*/
+
+var $ = function(id){ return document.getElementById(id); };
+var form = $('quiz'); form.classList.remove('hidden');
+var answers = {}, idx = 0;
+function show(){
+  var qs = questionsFor(answers);
+  form.querySelectorAll('fieldset').forEach(function(f){ f.classList.toggle('hidden', f.dataset.q !== qs[idx]); });
+  $('count').textContent = 'Question ' + (idx+1) + ' of ' + qs.length;
+  $('back').classList.toggle('hidden', idx === 0);
+  $('next').textContent = idx === qs.length - 1 ? 'Show my guide' : 'Next';
+}
+// Destination : le guide rendu par route(), la meme logique que la page complete.
+function finish(){
+  var r = route(answers);
+  form.classList.add('hidden');
+  showOut('<div class="res"><p class="note" style="color:#F7EEE5">Your buying guide:</p>' +
+    '<div class="big">' + esc(PAGES[r.page]) + '</div>' +
+    cta(ctaText(answers), '/guide/' + r.page + '/') +
+    basedLine(r.page, ourUrl('/guide/')) +
+    '<p>Worth reading too:</p><ul>' + r.tips.map(function(t){ return '<li><a href="' + ourUrl('/skate/' + t + '/') + '" target="_blank" rel="noopener">' + esc(TIPS[t]) + '</a></li>'; }).join('') + '</ul></div>' +
+    '<button id="again" type="button" class="ghost">Start again</button>');
+  $('again').addEventListener('click', function(){ Object.keys(answers).forEach(function(k){ delete answers[k]; }); form.reset(); idx = 0; $('out').innerHTML = ''; form.classList.remove('hidden'); show(); window.scrollTo(0, 0); });
+}
+$('next').addEventListener('click', function(){
+  var q = questionsFor(answers)[idx];
+  var sel = form.querySelector('input[name="' + q + '"]:checked');
+  if(!sel){ $('count').textContent = 'Pick an answer to continue.'; return; }
+  answers[q] = sel.value;
+  var qs = questionsFor(answers);
+  if(idx >= qs.length - 1) finish(); else { idx++; show(); }
+});
+$('back').addEventListener('click', function(){ if(idx > 0){ idx--; show(); } });
+show();
+
+</script>
+</body>
+</html>

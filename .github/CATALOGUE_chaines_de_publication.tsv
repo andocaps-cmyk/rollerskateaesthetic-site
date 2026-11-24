@@ -1,0 +1,48 @@
+# CATALOGUE DES CHAINES DE PUBLICATION AUTOMATIQUE DU DEPOT DU SITE
+#
+# CE QUE FAIT CE FICHIER. Il recense, une ligne par chaine, les fichiers de
+# `<fichier local>`, et il nomme pour chacune CE QUI SIGNALE
+# SON ECHEC. Il est lu par `GARDE_chaines_de_publication.py`, qui sort en erreur des qu'une
+# chaine du disque n'a pas de ligne ici, des qu'une ligne d'ici n'a plus de fichier sur le
+# disque, et des qu'une ligne porte « aucun » dans la colonne « surveillant ».
+#
+# POURQUOI IL EXISTE. Au 15/09/2026 le depot portait cinq chaines et une seule voyait son echec
+# remonter jusqu'a quelqu'un a l'interieur du dispositif. Le mecanisme qui a produit ce trou est
+# celui d'une liste ecrite une fois et jamais tenue : une chaine ajoutee n'etait couverte par
+# rien et rien ne le disait. Ce fichier ne repare pas ce mecanisme a lui seul — c'est la garde
+# qui le lit qui le fait echouer.
+#
+# ⛔ CE QUE « SURVEILLANT » VEUT DIRE, ET CE N'EST PAS « quelqu'un finira par le voir ».
+# La colonne nomme un dispositif qui FAIT ECHOUER QUELQUE CHOSE quand la chaine echoue. Le
+# courriel que GitHub envoie tout seul sur une execution rouge n'est PAS un surveillant au sens
+# de cette colonne : il depend des reglages de notification du compte, qui ne sont lisibles
+# d'ici par aucune commande, et il ne laisse aucune trace dans le dispositif.
+#
+# VALEURS RELEVEES LE 16/09/2026, sur les fichiers du disque, par lecture de chaque `on:`.
+#
+#
+# MISE D'ACCORD DU 18/10/2026 (lot 4-E du rattrapage, poste 4). Les deux exemplaires de ce fichier
+# — `.github/CATALOGUE_chaines_de_publication.tsv` dans le depot andocaps-cmyk/rollerskateaesthetic-site
+# et `<instrument local>` — avaient diverge :
+# le depot avait recu quatre corrections (29/09, 30/09 x2, 09/10/2026 : retrait de pinterest-releve.yml,
+# ajout de bluesky.yml, preuve-quotidienne.yml, publier.yml) jamais recopiees dans la boite, et la
+# boite datait du 24/09/2026. Cet exemplaire est reecrit a partir de celui du depot, plus la ligne
+# `ordinateur-eteint.yml` (chaine poussee le 15/10/2026, commits fb8409b, 8ae798d, feca71a, sans ligne
+# ici : la garde rougit depuis le 15/10, executions 38775918682, 38935254391, 39046770469).
+# LEQUEL FAIT FOI : celui que la garde LIT quand elle tourne, donc celui du depot ; cet exemplaire-ci
+# est la copie de travail du poste 4 et doit lui etre identique octet pour octet apres chaque poussee.
+# Tant que la ligne ci-dessous n'est pas dans le depot, le depot est en retard sur cette copie.
+#
+# colonnes: fichier	nom	declencheur	surveillant	depuis
+fournee.yml	Fournee quotidienne	horaire 10h et 16h UTC, et poussee sur main	surveillance.py, par effet : il rougit si le flux du jour manque	2026-09-16
+liens-amazon.yml	Liens Amazon sur les pages de materiel	poussee touchant son propre fichier, et lancement a la main	echec-de-chaine.yml (posee le 24/09/2026, cron 12h30 UTC ; premiere execution reelle non encore observee, voir registre)	2026-09-24
+pied-de-page.yml	Pied de page des pages skate	poussee touchant son propre fichier, et lancement a la main	echec-de-chaine.yml (posee le 24/09/2026, cron 12h30 UTC ; premiere execution reelle non encore observee, voir registre)	2026-09-24
+surveillance.yml	Surveillance de la chaine de publication	horaire 11h30 UTC	echec-de-chaine.yml (posee le 24/09/2026, cron 12h30 UTC ; premiere execution reelle non encore observee, voir registre)	2026-09-24
+echec-de-chaine.yml	Echec d une chaine de publication	horaire 12h30 UTC	aucun (voir 'ce qui n'a pas ete repare')	2026-09-24
+bluesky.yml	Publication Bluesky	horaire 16h40 UTC, poussee de _releves/declencheur_bluesky.txt, et lancement a la main	echec-de-chaine.yml (posee le 24/09/2026, cron 12h30 UTC ; premiere execution reelle non encore observee, voir registre)	2026-09-29
+preuve-quotidienne.yml	Preuve quotidienne	horaire 17h30 UTC, poussee de ses propres fichiers, et lancement a la main	echec-de-chaine.yml (son echec est aussi signale par le courriel d'echec de GitHub ; son silence se voit : aucun message Telegram ce jour-la)	2026-09-30
+publier.yml	Publication controlee	poussee sur main, fin de fournee.yml, bluesky.yml, liens-amazon.yml et pied-de-page.yml, et lancement a la main	echec-de-chaine.yml (cron 12h30 UTC, et son controle des echecs des sept derniers jours)	2026-10-09
+ordinateur-eteint.yml	Ordinateur eteint	horaire toutes les 3 h (cron 17 */3 * * *), et lancement a la main	echec-de-chaine.yml (cron 12h30 UTC ; son controle « chaine a horaire muette depuis plus de 48 h » et son controle des echecs des 26 dernieres heures)	2026-10-15
+threads.yml	Publication Threads	horaire 7h20, 10h20, 13h20, 16h20 et 19h20 UTC (+0 a 25 min ; depuis le 29/10/2026), poussee de _releves/declencheur_threads.txt, et lancement a la main	echec-de-chaine.yml (cron 12h30 UTC ; son controle des echecs des 26 dernieres heures et des chaines a horaire muettes)	2026-10-26
+instagram.yml	Publication Instagram	horaire 8h50, 13h50 et 18h50 UTC (+0 a 25 min), poussee de _releves/declencheur_instagram.txt, et lancement a la main	echec-de-chaine.yml (cron 12h30 UTC ; son controle des echecs des 26 dernieres heures et des chaines a horaire muettes)	2026-10-29
+youtube.yml	Publication YouTube	horaire 9h35 et 17h35 UTC (+0 a 25 min ; 0 video par jour tant que _releves/youtube_ouvert.txt manque), poussee de _releves/declencheur_youtube.txt, et lancement a la main	echec-de-chaine.yml (cron 12h30 UTC ; son controle des echecs des 26 dernieres heures et des chaines a horaire muettes)	2026-10-29

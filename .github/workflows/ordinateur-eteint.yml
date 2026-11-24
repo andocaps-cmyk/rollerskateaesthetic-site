@@ -1,0 +1,108 @@
+# ORDINATEUR ÉTEINT — posée le 15/10/2026.
+#
+# Toutes les trois heures, lit l'heure écrite par l'ordinateur du propriétaire dans `signal.txt` de la branche
+# `signal-de-vie` (script `_releves/signal_de_vie.py` du dossier le dossier de travail local, tache locale
+# « la tache locale de signal de vie », une fois par heure). Si ce signal a plus de trois heures, envoie au propriétaire
+# UNE phrase sur Telegram qui lui dit d'allumer l'ordinateur. Une seule alerte par panne : la clé de
+# cache `alerte-<heure du signal>` marque la panne comme déjà signalée.
+#
+# POURQUOI. Demande du propriétaire du 14/10/2026 : rien sur Telegram quand tout va bien ; quand ça ne va pas,
+# ce qu'il doit faire, en mots normaux. Les tâches automatiques de Claude exigent l'ordinateur allumé
+# et réveillé avec l'application Claude ouverte ; c'est le seul geste qui revient au propriétaire.
+# La clé du robot reste dans les secrets du dépôt (mêmes secrets que « Preuve quotidienne »).
+#
+# 24/10/2026 (extinction nocturne 1 h-5 h, décision du propriétaire) : aucune alerte entre 1 h et 5 h Paris (etat=planifie) ;
+# deux horaires de plus (7 et 37, à 3 h et 4 h UTC) pour que le premier passage après 5 h Paris (été comme hiver)
+# envoie « rallume l'ordinateur » si le signal a plus de 3 h. Une fois par panne (cache). PC allumé : signal < 3 h, rien ne part.
+# 24/10/2026 20 h 15 (décision du propriétaire de 19 h 20 : le PC se rallume seul) : le message devient une alarme d'échec seulement ;
+# silence jusqu'à 6 h Paris (rallumage + ouverture de session), passages à 4 et 5 h UTC = 6 h 07 et 6 h 37 Paris en hiver.
+#
+# Limite connue : les horaires GitHub de ce dépôt partent avec 4 à 9 h de retard (mesuré les 11 et
+# 12/10/2026). L'alerte peut donc arriver tard ; elle ne peut pas arriver à tort.
+
+name: Ordinateur eteint
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+    - cron: "7 4,5 * * *"
+    - cron: "37 4,5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ordinateur-eteint
+  cancel-in-progress: false
+
+jobs:
+  controle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lire le signal de vie
+        id: signal
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -u
+          brut=$(curl -sS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.raw" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/signal.txt?ref=signal-de-vie" || true)
+          heure=$(echo "$brut" | head -1 | tr -d '[:space:]')
+          if ! date -u -d "$heure" +%s >/dev/null 2>&1; then
+            echo "Signal illisible : '$heure'. Aucune alerte (on n'accuse pas l'ordinateur sur une lecture ratée)."
+            echo "etat=illisible" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          age=$(( ( $(date -u +%s) - $(date -u -d "$heure" +%s) ) / 3600 ))
+          echo "Dernier signal : $heure (il y a $age h)"
+          echo "heure=$heure" >> "$GITHUB_OUTPUT"
+          echo "age=$age" >> "$GITHUB_OUTPUT"
+          hp=$(TZ=Europe/Paris date +%H%M); hp=$((10#$hp))
+          if [ "$age" -ge 3 ]; then
+            if [ "$hp" -ge 100 ] && [ "$hp" -lt 600 ]; then
+              echo "Panne apparente mais nous sommes dans l'arrêt nocturne voulu (1 h-5 h Paris) ou le temps du rallumage seul (jusqu'à 6 h) : aucune alerte."
+              echo "etat=planifie" >> "$GITHUB_OUTPUT"
+            else
+              echo "etat=eteint" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "etat=vivant" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Panne deja signalee ?
+        if: steps.signal.outputs.etat == 'eteint'
+        id: deja
+        uses: actions/cache/restore@v4
+        with:
+          path: alerte.txt
+          key: alerte-${{ steps.signal.outputs.heure }}
+          lookup-only: true
+
+      - name: Prevenir le proprietaire
+        if: steps.signal.outputs.etat == 'eteint' && steps.deja.outputs.cache-hit != 'true'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          HEURE: ${{ steps.signal.outputs.heure }}
+        run: |
+          set -u
+          depuis=$(TZ=Europe/Paris date -d "$HEURE" "+%d/%m à %H h %M")
+          HP_SIGNAL=$(TZ=Europe/Paris date -d "$HEURE" +%H); HP_SIGNAL=$((10#$HP_SIGNAL))
+          if [ "$HP_SIGNAL" -ge 23 ] || [ "$HP_SIGNAL" -le 1 ]; then
+            texte="Le PC ne s'est pas rallumé seul, appuie sur le bouton. Puis ouvre ta session et laisse l'application Claude démarrer."
+          else
+            texte="Ton ordinateur ne répond plus depuis le $depuis (éteint, en veille, ou application Claude fermée). Ce que tu fais : allume-le et ouvre l'application Claude."
+          fi
+          reponse=$(curl -sS -m 20 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" --data-urlencode "text=${texte}")
+          echo "$reponse" | grep -q '"ok":true' || { echo "ENVOI TELEGRAM EN ECHEC"; exit 1; }
+          echo "$HEURE" > alerte.txt
+          echo "Alerte envoyée."
+
+      - name: Marquer la panne comme signalee
+        if: steps.signal.outputs.etat == 'eteint' && steps.deja.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: alerte.txt
+          key: alerte-${{ steps.signal.outputs.heure }}

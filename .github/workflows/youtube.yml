@@ -1,0 +1,108 @@
+# niveau : script — publication sans modele, zero jeton de modele ; pas de niveau au-dessus necessaire.
+name: Publication YouTube
+
+# Fabrique (ffmpeg, sans son) et envoie sur YouTube, par l'API officielle YouTube Data v3, une courte video verticale
+# par page du site (publier_youtube.py), puis releve les chiffres de la chaine. Ecrit le 29/10/2026
+# (un document interne), sur le modele de threads.yml. Registre : _releves/publies_youtube.tsv.
+# FERMEE A LA NAISSANCE : tant que _releves/youtube_ouvert.txt n'existe pas, la garde du script rend 0 video par jour.
+# Ouverte : 1 par jour pendant 14 jours a compter de la premiere video publique, puis 2 ; 1 si _releves/alerte_youtube.txt
+# existe ; 4 heures au moins entre deux videos. Deux passages par jour, chacun precede d'une attente au hasard de 0 a 25 min.
+# La video d'essai privee se lance a la main : workflow_dispatch avec essai_prive=true (une seule, jamais deux).
+on:
+  schedule:
+    - cron: "35 9 * * 1,4"
+    - cron: "46 9 * * 2,5"
+    - cron: "54 9 * * 0,3,6"
+    - cron: "35 17 * * 1,4"
+    - cron: "46 17 * * 2,5"
+    - cron: "54 17 * * 0,3,6"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true = affiche sans envoyer"
+        default: "true"
+      essai_prive:
+        description: "true = envoie UNE video en prive (preuve que la chaine marche)"
+        default: "false"
+  # Declencheur de secours, comme threads.yml : modifier _releves/declencheur_youtube.txt
+  # (lignes dry_run=true|false et essai_prive=true|false).
+  push:
+    branches: [main]
+    paths: ["_releves/declencheur_youtube.txt"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube
+  cancel-in-progress: false
+
+jobs:
+  youtube:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le depot
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Mode
+        env:
+          EVENT: ${{ github.event_name }}
+          IN_DRY: ${{ github.event.inputs.dry_run }}
+          IN_ESSAI: ${{ github.event.inputs.essai_prive }}
+          HAS_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN != '' }}
+        run: |
+          DRY_RUN=true; ESSAI=false
+          if [ "$EVENT" = "schedule" ]; then DRY_RUN=false; fi
+          if [ "$EVENT" = "workflow_dispatch" ]; then DRY_RUN="${IN_DRY:-true}"; ESSAI="${IN_ESSAI:-false}"; fi
+          if [ "$EVENT" = "push" ]; then
+            v=$(sed -n 's/^dry_run=//p' _releves/declencheur_youtube.txt | head -1 | tr -d '\r '); [ -n "$v" ] && DRY_RUN="$v"
+            v=$(sed -n 's/^essai_prive=//p' _releves/declencheur_youtube.txt | head -1 | tr -d '\r '); [ -n "$v" ] && ESSAI="$v"
+          fi
+          if [ "$ESSAI" = "true" ]; then DRY_RUN=false; fi
+          if [ "$HAS_TOKEN" != "true" ] && [ "$DRY_RUN" = "false" ]; then
+            echo "::warning::Secret YOUTUBE_REFRESH_TOKEN absent : chaine YouTube du projet pas encore reliee (voir la documentation du projet). Passage a blanc."
+            DRY_RUN=true; ESSAI=false
+          fi
+          echo "Mode: dry_run=$DRY_RUN essai_prive=$ESSAI (evenement $EVENT)"
+          echo "DRY_RUN=$DRY_RUN" >> "$GITHUB_ENV"
+          echo "ESSAI=$ESSAI" >> "$GITHUB_ENV"
+
+      - name: Outils
+        run: |
+          pip install -q pillow
+          [ "$DRY_RUN" = "true" ] && exit 0
+          command -v ffmpeg >/dev/null && [ -f /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf ] || {
+            sudo apt-get update -q && sudo apt-get install -y -q ffmpeg fonts-dejavu-core; }
+
+      - name: Publier
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: |
+          if [ "$ESSAI" = "true" ]; then python3 publier_youtube.py --essai-prive
+          elif [ "$DRY_RUN" = "true" ]; then python3 publier_youtube.py --dry-run
+          elif [ "$GITHUB_EVENT_NAME" = "schedule" ]; then python3 publier_youtube.py --max-posts 1 --attente-max 240
+          else python3 publier_youtube.py --max-posts 1; fi
+
+      - name: Relever les chiffres
+        if: always() && env.DRY_RUN == 'false'
+        continue-on-error: true
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python3 publier_youtube.py --releve
+
+      - name: Pousser le registre
+        if: always() && env.DRY_RUN == 'false'
+        run: |
+          git config user.name "youtube-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add $(ls _releves/publies_youtube.tsv _releves/essai_youtube.tsv _releves/echecs_youtube.tsv \
+                       _releves/alerte_youtube.txt _releves/suspension_youtube.json _releves/releve_youtube.csv 2>/dev/null)
+          if git diff --cached --quiet; then echo "Registre inchange."; exit 0; fi
+          git commit -m "Registre YouTube du $(date -u +%F)"
+          git pull --rebase origin main && git push || { git pull --rebase origin main && git push; }
