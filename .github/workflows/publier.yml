@@ -88,6 +88,29 @@ jobs:
           echo "prod : $AVANT -> $APRES"
           echo "avance=oui" >> "$GITHUB_OUTPUT"
 
+      # L'hebergement (Cloudflare Pages) construit la branche prod du depot prive historique : on y recopie
+      # exactement le meme commit, en forcant, et UNIQUEMENT la branche prod. Le jeton ne s'affiche jamais ;
+      # un echec rend la chaine rouge.
+      - name: Miroir de prod vers l'hebergement
+        env:
+          MIROIR_PAT: ${{ secrets.ROLLER_PROD_MIROIR_PAT }}
+        run: |
+          set -eu
+          if [ -z "$MIROIR_PAT" ]; then
+            echo "::error::Secret ROLLER_PROD_MIROIR_PAT absent : prod n'est pas recopie vers l'hebergement."; exit 1
+          fi
+          AUTH=$(printf 'x-access-token:%s' "$MIROIR_PAT" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=http.extraheader GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $AUTH"
+          CIBLE=https://github.com/andocaps-cmyk/rollerskateaesthetic.git
+          APRES=$(git rev-parse HEAD)
+          DEJA=$(git ls-remote "$CIBLE" refs/heads/prod | cut -f1)
+          if [ "$DEJA" = "$APRES" ]; then
+            echo "L'hebergement est deja a $APRES : rien a recopier."; exit 0
+          fi
+          git push --force "$CIBLE" "+HEAD:refs/heads/prod"
+          echo "Miroir : prod de l'hebergement $DEJA -> $APRES"
+
       - name: Controle apres deploiement (ne bloque pas)
         if: steps.pousser.outputs.avance == 'oui'
         run: |
