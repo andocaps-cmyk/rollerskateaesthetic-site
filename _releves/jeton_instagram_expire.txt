@@ -1,2 +1,2 @@
-# jeton Instagram genere le 2026-10-29 (tableau de bord Meta) ; expire vers le 2026-12-28 (60 jours)
-2026-12-28
+# jeton Instagram renouvele le 2026-11-24 23:22 UTC ; expire le 2027-01-23 (expires_in=5184000 s)
+2027-01-23
