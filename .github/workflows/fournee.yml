@@ -88,6 +88,16 @@ jobs:
       # agent sans le menu le recoit ici, a la fournee suivante. Idempotent : une page qui le porte
       # deja n'est pas reecrite. En cas d'echec on revient aux pages du depot et on ne bloque pas
       # l'envoi des flux.
+      # La page /skate/ (posee le 26/11/2026, build_index_skate.py) : une porte vers toutes les pages
+      # skate. Le 26/11/2026, 132 pages /skate/ sur 237 n'avaient aucun lien interne. Une page skate
+      # ajoutee entre dans l'index ici. En cas d'echec on revient a la page du depot, sans bloquer.
+      - name: Mettre a jour la page /skate/ (index de toutes les pages skate)
+        run: |
+          python3 build_index_skate.py || {
+            echo "ECHEC de l'index /skate/ — page du depot conservee"
+            git checkout -- skate/index.html sitemap.xml
+          }
+
       - name: Poser le menu du site sur les pages qui ne l'ont pas
         run: |
           python3 menu_du_site.py || {
