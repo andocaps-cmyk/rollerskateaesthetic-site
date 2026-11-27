@@ -1,2 +1,2 @@
-# jeton Threads renouvele le 2026-11-20 18:42 UTC ; expire le 2027-01-19 (expires_in=5184000 s)
-2027-01-19
+# jeton Threads renouvele le 2026-11-27 19:35 UTC ; expire le 2027-01-26 (expires_in=5184000 s)
+2027-01-26
