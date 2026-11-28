@@ -87,7 +87,10 @@ jobs:
           fi
           python3 publier_threads.py --rafraichir-jeton "$RUNNER_TEMP/jeton"
           if cmp -s <(printf %s "$THREADS_ACCESS_TOKEN") "$RUNNER_TEMP/jeton"; then echo "Meme jeton : secret inchange."; exit 0; fi
-          if [ -z "$SECRETS_PAT" ]; then echo "::error::Jeton neuf mais ROLLER_SECRETS_PAT absent : secret non reecrit."; exit 1; fi
+          # 28/11/2026 : sans PAT le jeton neuf n'est pas range, donc sa date de fin ne doit pas etre ecrite : le
+          # 27/11 le fichier a annonce 2027-01-26 pour un jeton jete, ce qui aurait coupe les renouvellements jusqu'au
+          # 04/12 alors que la fin du jeton RANGE est inconnue. On remet le fichier tel qu'il etait avant ce passage.
+          if [ -z "$SECRETS_PAT" ]; then git checkout -- _releves/jeton_threads_expire.txt 2>/dev/null || true; echo "::error::Jeton neuf mais ROLLER_SECRETS_PAT absent : secret non reecrit, date de fin non ecrite."; exit 1; fi
           pip install -q pynacl
           python3 - <<'EOF'
           import base64, json, os, urllib.request

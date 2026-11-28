@@ -1,2 +1,5 @@
-# jeton Threads renouvele le 2026-11-27 19:35 UTC ; expire le 2027-01-26 (expires_in=5184000 s)
-2027-01-26
+# fin du jeton Threads RANGE DANS LE SECRET : INCONNUE (retabli le 2026-11-28 par la remise en route).
+# Le renouvellement du 2026-11-27 19:35 UTC avait ecrit ici « 2027-01-26 », fin du jeton NEUF ; ce jeton n'a pas ete
+# range dans le secret (ROLLER_SECRETS_PAT absent, run 46057783589) et il est perdu. Le secret THREADS_ACCESS_TOKEN porte
+# toujours la valeur posee le 2026-11-24 depuis le coffre, dont la fin n'est ecrite nulle part. Sans date, la chaine
+# retente le renouvellement chaque jour et reste rouge tant que ROLLER_SECRETS_PAT manque : c'est voulu, c'est vrai.
